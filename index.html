@@ -1,1245 +1,349 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Divine Path — Tarot • Numerology • Kundli • AI Insights</title>
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-  :root{
-    --bg:#0b0d10;
-    --card:#11141aee;
-    --muted:#9aa3af;
-    --text:#e7e9ee;
-    --brand:#ffd166;
-    --brand-2:#8ec5ff;
-    --accent:#e08cff;
-    --ok:#4ade80;
-    --warn:#f59e0b;
-    --bad:#ef4444;
-    --radius:18px;
-    --radius-lg:22px;
-    --shadow: 0 10px 30px rgba(0,0,0,.4);
-    --glass-b: linear-gradient(135deg, #ffffff26, #ffffff10);
-  }
-
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(1200px 800px at 10% -10%, #1b2230 0%, transparent 60%),
-      radial-gradient(900px 600px at 90% 10%, #261a3a 0%, transparent 60%),
-      linear-gradient(180deg,#0b0d10 0%, #0b0d10 100%);
-    background-attachment: fixed;
-  }
-
-  /* NAV */
-  .nav{
-    position:sticky; top:0; z-index:50;
-    backdrop-filter:saturate(140%) blur(10px);
-    background: linear-gradient(180deg, #0b0d10cc, #0b0d10aa);
-    border-bottom:1px solid #1f2530;
-  }
-  .nav .wrap{
-    max-width:1200px; margin:auto; padding:14px 20px;
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
-  }
-  .brand{
-    font-family:"Playfair Display",serif;
-    font-weight:700; letter-spacing:.5px; color:var(--brand);
-    display:flex; align-items:center; gap:.6rem;
-  }
-  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
-  .nav a{color:var(--text);text-decoration:none;font-weight:600;opacity:.9}
-  .nav ul{display:flex;gap:22px;list-style:none}
-  .nav a:hover{color:var(--brand)}
-  .btn-nav{
-    font-weight:800; padding:.7rem 1rem; border-radius:999px; border:1px solid #ffffff3a;
-    background:var(--glass-b); text-decoration:none; color:#fff; box-shadow:0 10px 24px #0005;
-  }
-
-  /* GLASSY BUTTONS */
-  .btn, .ghost{
-    position:relative; isolation:isolate;
-    display:inline-flex; align-items:center; gap:.55rem;
-    padding:.9rem 1.15rem; border-radius:999px; text-decoration:none;
-    font-weight:800; transform:translateY(0) scale(1); transition:.35s ease;
-    box-shadow:0 10px 24px rgba(0,0,0,.35);
-    overflow:hidden; backdrop-filter: blur(10px) saturate(140%);
-    cursor:pointer; user-select:none;
-  }
-  .btn{
-    background:linear-gradient(135deg, #ffffff33, #ffffff12),
-               radial-gradient(60% 120% at 20% 0%, var(--brand) 0%, #ff9f4d 55%, #ff7b33 100%);
-    color:#272316; border:1px solid #ffffff55;
-  }
-  .ghost{
-    background:linear-gradient(135deg,#1a2030aa,#0f1320aa);
-    color:#c7ceda; border:1px solid #3a455c;
-  }
-  .btn::before, .ghost::before{
-    content:""; position:absolute; inset:auto auto 8% 10%; width:86%; height:42%;
-    background:radial-gradient(120% 120% at 50% 0%, #ffffff80 0%, #ffffff10 55%, transparent 70%);
-    border-radius:999px; filter:blur(2px); opacity:.7; pointer-events:none;
-    transform:translateY(0); transition:transform .35s ease,opacity .35s ease;
-  }
-  .btn::after, .ghost::after{
-    content:""; position:absolute; top:10%; right:12%; width:18px; height:18px; border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #fff8 0%, #fff2 45%, #fff0 70%);
-    box-shadow:inset 0 0 10px #fff3, 0 8px 14px #0004; filter:blur(.2px);
-    animation:float 3.2s ease-in-out infinite;
-  }
-  .btn:hover, .ghost:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 16px 28px rgba(0,0,0,.45)}
-  .btn:active, .ghost:active{ transform:translateY(0) scale(.99) }
-  .btn:hover::before, .ghost:hover::before{ transform:translateY(-3px); opacity:.9 }
-
-  @keyframes float{ 0%,100%{ transform:translateY(0)} 50%{ transform:translateY(-6px)} }
-
-  /* HERO */
-  .hero{
-    position:relative; overflow:hidden;
-    display:grid; place-items:center; text-align:center;
-    min-height:82vh;
-  }
-  .hero .stars{position:absolute; inset:-20% -10%; background:url('https://images.unsplash.com/photo-1543722530-d2c3201371e7?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat; filter:brightness(.35) contrast(1.05) saturate(1.05); transform:scale(1.05)}
-  .hero .veil{position:absolute; inset:0; background:
-    radial-gradient(60% 60% at 50% 40%, #0000 0%, #0b0d10 90%),
-    radial-gradient(60% 60% at 10% 10%, #11142466 0%, #0000 30%)
-  }
-  .hero .content{position:relative; padding:0 20px; max-width:920px; animation:fadeUp .9s ease both}
-  .kicker{
-    color:var(--brand); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:.82rem; opacity:.9
-  }
-  .h1{
-    font-family:"Playfair Display",serif; font-size:clamp(2.6rem,5vw,3.6rem);
-    line-height:1.08; margin:.6rem 0 1rem;
-    text-shadow:0 10px 30px rgba(0,0,0,.6);
-  }
-  .sub{
-    max-width:700px; margin:auto; color:var(--muted);
-    font-size:1.04rem
-  }
-  .hero .cta{margin-top:1.8rem; gap:12px}
-
-  /* FLOATING BUTTON-CARD UTIL */
-  .float-card{
-    display:inline-flex; align-items:center; gap:.6rem;
-    padding:14px 16px; border-radius:20px; border:1px solid #ffffff2a;
-    background:linear-gradient(140deg,#0f132099,#0b0f1b66);
-    box-shadow:0 18px 36px #0006, inset 0 1px 0 #fff2;
-    backdrop-filter: blur(12px) saturate(130%);
-  }
-
-  /* SECTION WRAPPER */
-  .section{max-width:1200px; margin:82px auto; padding:0 20px}
-  .section h2{
-    font-family:"Playfair Display",serif; font-size:clamp(1.9rem,3.2vw,2.4rem);
-    margin-bottom:14px
-  }
-  .lead{color:var(--muted)}
-
-  /* GLASS CARDS / PANELS */
-  .panel{
-    background:linear-gradient(180deg, var(--card), #0f1320ee);
-    border:1px solid #1f2530; border-radius:var(--radius-lg); box-shadow:var(--shadow);
-    padding:22px;
-  }
-
-  /* GRID */
-  .grid{ display:grid; gap:26px; align-items:start }
-  @media (min-width:1000px){ .grid-2{grid-template-columns:1.1fr .9fr} }
-  @media (min-width:1000px){ .grid-3{grid-template-columns:1fr 1fr 1fr} }
-
-  .imgcard{
-    position:relative; overflow:hidden;
-    background:linear-gradient(180deg,#0d111b,#0f1320); border:1px solid #1f2530; border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:14px
-  }
-  .imgcard img{width:100%; height:auto; border-radius:calc(var(--radius-lg) - 8px); display:block; filter:saturate(1.05) contrast(1.02)}
-  .imgcard::after{content:""; position:absolute; inset:6px; border-radius:calc(var(--radius-lg) - 8px); pointer-events:none; box-shadow:inset 0 0 0 1px #ffffff10}
-
-  /* TOOL TABS */
-  .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-  .tab{
-    border:1px solid #2a344a; border-radius:999px; padding:.6rem .9rem; cursor:pointer;
-    background:linear-gradient(140deg,#121a2e,#0f1320); color:#cfd7ea; font-weight:700;
-    box-shadow:0 8px 18px #0004; transition:.25s ease
-  }
-  .tab.active{ border-color:#4761a8; color:#fff; box-shadow:0 10px 24px #0006; transform:translateY(-2px) }
-  .tab:hover{ transform:translateY(-2px) }
-
-  .tool{ display:none; margin-top:18px }
-  .tool.show{ display:block; }
-
-  /* FORMS */
-  .row{display:grid; gap:12px}
-  @media (min-width:700px){ .row-2{grid-template-columns:1fr 1fr} .row-3{grid-template-columns:1fr 1fr 1fr}}
-  label{font-size:.9rem; color:#c9d1e7}
-  input, select, textarea{
-    width:100%; padding:.8rem .9rem; border-radius:14px; border:1px solid #2a3350;
-    background:linear-gradient(140deg,#0d1324,#0a0f1a); color:#e8ebf7; outline:none;
-    box-shadow: inset 0 0 0 1px #ffffff10, 0 8px 18px #0004;
-  }
-  textarea{min-height:90px; resize:vertical}
-  .hl{ color:var(--brand); font-weight:800 }
-
-  /* TAROT */
-  .tarot-stage{
-    position:relative; min-height:320px; border-radius:18px; border:1px dashed #243047;
-    display:grid; place-items:center; overflow:hidden;
-    background:radial-gradient(1000px 600px at 40% -10%, #142036 0%, #0b0d10 60%);
-  }
-  .deck, .spread{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none }
-  .card3d{
-    width:140px; height:220px; border-radius:14px; border:1px solid #334164;
-    background:linear-gradient(160deg,#0f1526,#0b0f1a);
-    box-shadow: 0 24px 60px #0008, inset 0 1px 0 #fff3;
-    transform-style:preserve-3d; transform: perspective(900px) rotateX(8deg) rotateY(-8deg);
-    transition: transform .7s cubic-bezier(.2,.9,.15,1), box-shadow .4s ease, filter .4s ease, translate .7s;
-    position:absolute; top:50%; left:50%; translate:-50% -50%;
-    cursor:pointer; pointer-events:auto;
-  }
-  .card3d:hover{ transform: perspective(900px) rotateX(4deg) rotateY(4deg) scale(1.02); box-shadow: 0 26px 70px #000a }
-  .card-face{
-    position:absolute; inset:0; border-radius:12px; overflow:hidden;
-    backface-visibility:hidden;
-    display:grid; place-items:center;
-  }
-  .card-front{
-    background:radial-gradient(120% 100% at 50% 0%, #1d2440 0%, #0f1320 75%),
-               linear-gradient(180deg,#0e1220,#0a0e18);
-    border:1px solid #3b4a74;
-  }
-  .card-back{
-    transform:rotateY(180deg);
-    background:
-      radial-gradient(120% 100% at 50% 0%, #ffd16622 0%, #ffd16605 55%, transparent 70%),
-      linear-gradient(160deg,#121a2f,#0b0f1a);
-    border:1px solid #3a415a;
-  }
-  .sigil{
-    width:70%; height:70%; border-radius:12px;
-    display:grid; place-items:center; padding:10px;
-    background:linear-gradient(130deg,#ffffff14,#ffffff08);
-    box-shadow:inset 0 0 0 1px #ffffff18, inset 0 0 60px #ffd16611;
-  }
-  .sigil svg{ width:100%; height:100%; filter:drop-shadow(0 6px 20px #0006) }
-  .title{
-    position:absolute; bottom:8px; left:0; right:0; text-align:center; font-weight:800; font-size:.95rem; color:#eaeefc
-  }
-  .keyword{ font-size:.85rem; color:#c3cbe2 }
-  .spread-area{ position:absolute; inset:0; pointer-events:none; }
-  .slot{ position:absolute; width:140px; height:220px; }
-  .result{
-    margin-top:16px; background:linear-gradient(140deg,#0e1426,#0b0f1b);
-    border:1px solid #27304a; border-radius:16px; padding:16px; box-shadow:0 12px 28px #0006
-  }
-  .result h4{ font-size:1.08rem; margin-bottom:8px }
-  .result p{ color:#cdd5ea; line-height:1.7 }
-
-  /* NUMEROLOGY */
-  .num-output{
-    margin-top:16px; display:grid; gap:12px
-  }
-  .mini{
-    padding:14px; border-radius:14px; border:1px solid #26304a;
-    background:linear-gradient(140deg,#0d1324,#0b0f1b);
-  }
-
-  /* KUNDLI */
-  .kundli-grid{
-    margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
-  }
-  .house{
-    aspect-ratio:1/1; border:1px solid #32405f; border-radius:14px;
-    display:grid; place-items:center; position:relative;
-    background:linear-gradient(140deg,#0e1324,#0a0f1b);
-    box-shadow:inset 0 0 0 1px #ffffff10;
-  }
-  .house .idx{
-    position:absolute; top:8px; left:8px; font-size:.8rem; opacity:.7
-  }
-  .house .planets{
-    text-align:center; font-size:.86rem; line-height:1.45; color:#dce4ff
-  }
-  .kundli-note{ color:#9fb0d9; font-size:.9rem; margin-top:8px }
-  .dasha{ margin-top:14px; display:grid; gap:10px }
-  .dasha-item{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:10px 12px; border-radius:12px; border:1px solid #2a3550;
-    background:linear-gradient(140deg,#0b1224,#0b0f19);
-  }
-
-  /* CONTACT TILES (from your base style) */
-  .contact{ display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); margin-top:18px }
-  .contact a{ text-decoration:none; color:var(--text) }
-  .contact .tile{
-    background:linear-gradient(160deg,#121725,#0f1320); border:1px solid #21293a;
-    border-radius:16px; padding:18px; transition:.3s ease; box-shadow:0 6px 18px rgba(0,0,0,.25)
-  }
-  .contact .tile:hover{transform:translateY(-6px); border-color:#2a3550}
-  .contact .k{opacity:.8; font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:.72rem; color:#b7c0d6}
-  .contact .v{font-size:1.05rem; font-weight:700}
-
-  /* REVEAL ANIMS */
-  [data-reveal]{opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease}
-  [data-reveal].show{opacity:1; transform:none}
-
-  @keyframes fadeUp{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
-
-  /* UTIL */
-  .center{text-align:center}
-  .mt-16{margin-top:16px}
-  .mt-22{margin-top:22px}
-  .mt-28{margin-top:28px}
-  .mt-40{margin-top:40px}
-  .row-gap-8{row-gap:8px}
-
-  /* PRINT */
-  @media print{
-    .nav, .hero, .no-print{ display:none !important }
-    body{ background:#fff; color:#000 }
-    .panel, .result, .mini, .dasha-item, .house{ box-shadow:none; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lightweight Kundli (Offline · No API)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:'#7c3aed',panel:'#0b1220'},boxShadow:{soft:'0 10px 30px rgba(0,0,0,.12)'}}}};
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji"}
+    .chart{position:relative;width:100%;aspect-ratio:1/1}
+    .chart .diamond{position:absolute;inset:0;transform:rotate(45deg);border:2px solid #20304a;border-radius:14px;background:linear-gradient(180deg,#0a1220,#0a1322)}
+    .grid-12{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);position:absolute;inset:0}
+    .grid-12>div{display:flex;align-items:center;justify-content:center;padding:4px}
+    .house{width:100%;height:100%;border:1px solid #233047;border-radius:10px;background:#0c1626cc;backdrop-filter:blur(3px)}
+    .tag{display:inline-flex;gap:.35rem;align-items:center;padding:2px 8px;border-radius:999px;background:#0f172a;border:1px solid #243246;font-size:11px;margin:2px}
+    .label{font-size:10px;color:#9aa7bd}
+    .mono{font-variant-numeric:tabular-nums}
+  </style>
 </head>
-<body>
-
-  <!-- NAV -->
-  <header class="nav">
-    <div class="wrap">
-      <div class="brand"><span class="dot"></span> Divine Path</div>
-      <nav aria-label="Primary">
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#tarot">Tarot</a></li>
-          <li><a href="#numerology">Numerology</a></li>
-          <li><a href="#kundli">Kundli</a></li>
-          <li><a href="#ai">AI Insights</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <a class="btn-nav no-print" href="#ai">Get Guidance ✨</a>
-    </div>
-  </header>
-
-  <!-- HERO -->
-  <section id="home" class="hero" aria-label="Welcome">
-    <div class="stars" aria-hidden="true"></div><div class="veil" aria-hidden="true"></div>
-    <div class="content">
-      <div class="kicker">Guided by Tarot • Blessed by the Divine</div>
-      <h1 class="h1">Walk the Divine Path</h1>
-      <p class="sub">Tarot, Numbers & Stars—all aligned to reflect your inner journey. Ask a question, draw expressive cards with living animations & sound, calculate your core numbers, or generate your kundli with a beautifully illustrated chart.</p>
-      <div class="cta" style="display:flex;justify-content:center;flex-wrap:wrap;">
-        <a class="btn" href="#tarot">Start a Reading</a>
-        <a class="ghost" href="#numerology">Your Numbers</a>
-        <span class="float-card no-print">✨ Premium • Glass • Smooth • Divine</span>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div class="max-w-6xl mx-auto p-4 md:p-8">
+    <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold">⚝ Lightweight Kundli — Offline</h1>
+        <p class="text-slate-400">Ye version bina API ke **browser me hi** calculate karta hai. Accuracy: D1 chart ke liye kaafi achchi (Sun/Moon ✔, Lagna ✔). Planets simplified orbits se nikle jaate hain.</p>
       </div>
-    </div>
-  </section>
+      <div class="flex gap-2 items-center"><span class="tag">No API</span><span class="tag">Single file</span><span class="tag">North‑Indian chart</span></div>
+    </header>
 
-  <!-- TAROT -->
-  <section id="tarot" class="section">
-    <h2 data-reveal>Tarot Reading — Animated & Expressive 🔮</h2>
-    <p class="lead" data-reveal>Ask clearly. Choose a spread. Watch the deck breathe, shuffle, and reveal. Explanations are written so anyone can understand.</p>
-
-    <div class="panel mt-16" data-reveal>
-      <div class="row row-3 row-gap-8">
-        <div>
-          <label>Mode</label>
-          <select id="tarotMode">
-            <option value="offline" selected>Offline (no internet)</option>
-            <option value="online">Online (use API below)</option>
+    <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-soft mb-6">
+      <h2 class="text-lg font-semibold mb-3">Birth Details</h2>
+      <form id="form" class="grid md:grid-cols-5 gap-4">
+        <label class="block md:col-span-2">
+          <span class="text-sm text-slate-300">Date of Birth</span>
+          <input id="dob" type="date" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2" required>
+        </label>
+        <label class="block">
+          <span class="text-sm text-slate-300">Time of Birth</span>
+          <input id="tob" type="time" step="60" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2" required>
+        </label>
+        <label class="block">
+          <span class="text-sm text-slate-300">UTC Offset (hours)</span>
+          <input id="tz" type="number" step="0.25" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2" placeholder="5.5" value="5.5" required>
+        </label>
+        <div class="grid grid-cols-2 gap-4 md:col-span-2">
+          <label class="block">
+            <span class="text-sm text-slate-300">Latitude (°)</span>
+            <input id="lat" type="number" step="0.0001" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2" placeholder="26.9124" required>
+          </label>
+          <label class="block">
+            <span class="text-sm text-slate-300">Longitude (°)</span>
+            <input id="lon" type="number" step="0.0001" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2" placeholder="75.7873" required>
+          </label>
+        </div>
+        <label class="block">
+          <span class="text-sm text-slate-300">Ayanāṁśa</span>
+          <select id="ayana" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2">
+            <option value="lahiri" selected>Lahiri (approx)</option>
+            <option value="tropical">Tropical (Western)</option>
           </select>
+        </label>
+        <div class="flex items-end gap-3">
+          <button type="button" id="geoBtn" class="px-4 py-2 rounded-xl bg-primary/90 hover:bg-primary">Use current location</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold">Generate</button>
         </div>
-        <div>
-          <label>Spread</label>
-          <select id="tarotSpread">
-            <option value="one">1 — Single Card Insight</option>
-            <option value="three">3 — Past • Present • Future</option>
-            <option value="five">5 — Situation • Challenge • Advice • Hidden • Outcome</option>
-            <option value="celtic">10 — Celtic Cross (compact)</option>
-          </select>
-        </div>
-        <div>
-          <label>Question (optional but recommended)</label>
-          <input id="tarotQuestion" placeholder="e.g., What should I focus on for career growth?" />
-        </div>
-      </div>
+      </form>
+      <p class="text-xs text-slate-500 mt-3">Tip: Birth place ka **UTC offset** (DST agar tha to) sahi bharein. India ke liye usually 5.5.</p>
+    </section>
 
-      <div class="row row-2 mt-16">
-        <div>
-          <label>Online API Endpoint (optional)</label>
-          <input id="tarotApi" placeholder="https://your-free-api.example.com/tarot" />
-        </div>
-        <div>
-          <label>API Key (optional)</label>
-          <input id="tarotKey" placeholder="Only if your API needs a key" />
-        </div>
-      </div>
-
-      <div class="mt-16">
-        <button class="btn no-print" id="btnTarotDraw">Draw Cards ✨</button>
-        <button class="ghost no-print" id="btnTarotReset">Reset</button>
-        <span class="kundli-note">Tip: Press Draw and wait for shuffle + flip animation.</span>
-      </div>
-
-      <div class="tarot-stage mt-22" id="tarotStage" aria-live="polite">
-        <div class="deck" id="deck"></div>
-        <div class="spread" id="spread"></div>
-        <div class="spread-area" id="spreadArea"></div>
-      </div>
-
-      <div id="tarotResult" class="result" style="display:none;">
-        <h4>Reading</h4>
-        <div id="tarotText"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NUMEROLOGY -->
-  <section id="numerology" class="section">
-    <h2 data-reveal>Numerology — Core Numbers & Grids 🔢</h2>
-    <p class="lead" data-reveal>Get your Life Path, Destiny (Expression), Soul Urge, Personality, Maturity, Pinnacles & Challenges, and Lo Shu Grid.</p>
-
-    <div class="panel mt-16" data-reveal>
-      <div class="row row-3">
-        <div>
-          <label>Full Name (as used most often)</label>
-          <input id="numName" placeholder="e.g., Poonam Sharma" />
-        </div>
-        <div>
-          <label>Date of Birth</label>
-          <input id="numDob" type="date" />
-        </div>
-        <div>
-          <label>System</label>
-          <select id="numSystem">
-            <option value="pythagorean" selected>Pythagorean</option>
-            <option value="chaldean">Chaldean</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mt-16">
-        <button class="btn no-print" id="btnNumCalc">Calculate Numbers</button>
-        <button class="ghost no-print" id="btnNumReset">Reset</button>
-      </div>
-
-      <div id="numOutput" class="num-output"></div>
-      <div class="center mt-22"><button class="ghost no-print" onclick="window.print()">Download PDF Report</button></div>
-    </div>
-  </section>
-
-  <!-- KUNDLI -->
-  <section id="kundli" class="section">
-    <h2 data-reveal>Kundli — Illustrated Chart (Offline + Online Option) 🕉️</h2>
-    <p class="lead" data-reveal>Offline mode shows a consistent, illustrative chart. For precise planetary positions, switch to Online API when available.</p>
-
-    <div class="panel mt-16" data-reveal>
-      <div class="row row-3">
-        <div><label>Name</label><input id="kName" placeholder="e.g., Poonam" /></div>
-        <div><label>Birth Date</label><input id="kDate" type="date" /></div>
-        <div><label>Birth Time (local)</label><input id="kTime" type="time" /></div>
-      </div>
-      <div class="row row-3 mt-16">
-        <div><label>City (optional)</label><input id="kCity" placeholder="e.g., Ranchi" /></div>
-        <div><label>Mode</label>
-          <select id="kMode">
-            <option value="offline" selected>Offline (illustrative)</option>
-            <option value="online">Online (API)</option>
-          </select>
-        </div>
-        <div><label>System</label>
-          <select id="kSystem">
-            <option value="vedic" selected>Vedic style (North)</option>
-            <option value="western">Western Sun-based (demo)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row row-2 mt-16">
-        <div>
-          <label>Online API Endpoint (optional)</label>
-          <input id="kApi" placeholder="https://your-astrology-api.example.com/kundli" />
-        </div>
-        <div>
-          <label>API Key (optional)</label>
-          <input id="kKey" placeholder="Only if your API needs a key" />
-        </div>
-      </div>
-
-      <div class="mt-16">
-        <button class="btn no-print" id="btnKundli">Generate Kundli</button>
-        <button class="ghost no-print" id="btnKundliReset">Reset</button>
-      </div>
-
-      <div id="kundliWrap" class="mt-22" style="display:none;">
-        <div class="grid grid-2">
-          <div class="panel">
-            <h3 style="font-family:'Playfair Display',serif;">Illustrated Chart</h3>
-            <div class="kundli-grid" id="kundliGrid"></div>
-            <div class="kundli-note" id="kundliNote"></div>
-          </div>
-          <div class="panel">
-            <h3 style="font-family:'Playfair Display',serif;">Dasha Timeline (Illustrative)</h3>
-            <div class="dasha" id="dashaList"></div>
+    <section class="grid lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-soft">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold">D1 Rāśi Chart (North‑Indian)</h2>
+          <div class="flex gap-2 items-center">
+            <span id="ascTag" class="tag">Lagna: —</span>
+            <span id="ayanTag" class="tag">Ayanāṁśa: —</span>
           </div>
         </div>
-        <div class="panel mt-16">
-          <h3 style="font-family:'Playfair Display',serif;">Interpretation</h3>
-          <div id="kundliText"></div>
+        <div class="chart">
+          <div class="diamond"></div>
+          <div id="grid" class="grid-12"></div>
         </div>
-        <div class="center mt-22">
-          <button class="ghost no-print" onclick="window.print()">Download PDF Report</button>
-        </div>
+        <p class="text-xs text-slate-500 mt-2">Note: Ye lightweight calculator approx planetary orbits use karta hai. Lagna & Surya‑Chandra high accuracy hain; baaki grah ~±1–2° typical.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- AI INSIGHTS -->
-  <section id="ai" class="section">
-    <h2 data-reveal>AI Life Predictions — Offline Rules + Optional Free API 🤖</h2>
-    <p class="lead" data-reveal>Use offline, transparent logic (based on your cards & numbers) or plug any free text-generation API to enhance detail. If you leave API empty, offline mode runs automatically.</p>
-
-    <div class="panel mt-16" data-reveal>
-      <div class="row row-2">
-        <div>
-          <label>Prompt / Question</label>
-          <textarea id="aiPrompt" placeholder="e.g., Given my tarot draw & numerology, what are my next 6 months in career?"></textarea>
-        </div>
-        <div>
-          <label>Mode</label>
-          <select id="aiMode">
-            <option value="offline" selected>Offline (no API)</option>
-            <option value="online">Online (free API endpoint)</option>
-          </select>
-          <div class="mt-16">
-            <label>Online API Endpoint (optional)</label>
-            <input id="aiApi" placeholder="https://free-text-api.example.com/generate" />
-          </div>
-          <div class="mt-8">
-            <label>API Key (optional)</label>
-            <input id="aiKey" placeholder="If required" />
-          </div>
-        </div>
+      <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-soft">
+        <h2 class="text-lg font-semibold mb-2">Graha Positions</h2>
+        <div id="planetList" class="flex flex-wrap"></div>
+        <h3 class="text-sm text-slate-300 mt-4 mb-1">Debug</h3>
+        <pre id="debug" class="bg-black/40 border border-slate-800 rounded-xl p-3 overflow-auto text-xs max-h-80"></pre>
       </div>
+    </section>
 
-      <div class="mt-16">
-        <button class="btn no-print" id="btnAI">Generate Guidance</button>
-        <button class="ghost no-print" id="btnAIReset">Reset</button>
-      </div>
+    <footer class="text-xs text-slate-500 mt-10 text-center">Made for you — single file, no internet required.</footer>
+  </div>
 
-      <div id="aiOut" class="result" style="display:none;">
-        <h4>AI Guidance</h4>
-        <div id="aiText"></div>
-      </div>
-    </div>
-  </section>
+  <script>
+    // ---------- Utilities ----------
+    const D2R = Math.PI/180, R2D = 180/Math.PI;
+    const norm360 = x => (x%360+360)%360;
+    const sin = d=>Math.sin(d*D2R), cos=d=>Math.cos(d*D2R), tan=d=>Math.tan(d*D2R), atan2=(y,x)=>Math.atan2(y,x)*R2D;
 
-  <!-- CONTACT -->
-  <section id="contact" class="section">
-    <h2 data-reveal>Let’s Connect ✨</h2>
-    <p class="lead" data-reveal>Book your reading or just say hi.</p>
-
-    <div class="contact">
-      <a href="mailto:divinepath743@gmail.com" class="tile" data-reveal>
-        <div class="k">Email</div>
-        <div class="v">divinepath743@gmail.com</div>
-      </a>
-      <a href="https://wa.me/919835230370" target="_blank" rel="noopener" class="tile" data-reveal>
-        <div class="k">WhatsApp</div>
-        <div class="v">+91 9835230370</div>
-      </a>
-      <a href="https://instagram.com/punamtarotcardreader" target="_blank" rel="noopener" class="tile" data-reveal>
-        <div class="k">Instagram</div>
-        <div class="v">@punamtarotcardreader</div>
-      </a>
-    </div>
-
-    <div class="center" style="margin-top:22px" data-reveal>
-      <a class="ghost" href="#home">Back to top ↑</a>
-    </div>
-  </section>
-
-  <footer>
-    Guidance through Tarot, Blessings through the Divine • © 2025 Poonam/Poornika — All Rights Reserved • Built with ❤️
-  </footer>
-
-<script>
-/* -----------------------------
-   REVEAL ON SCROLL + HOVER PARALLAX + BUTTON SHIMMER
-------------------------------*/
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); }
-  })
-},{threshold:.14});
-document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
-
-// subtle parallax on hero background
-const stars = document.querySelector('.hero .stars');
-window.addEventListener('mousemove', (e)=>{
-  const x = (e.clientX / window.innerWidth - .5) * 8;
-  const y = (e.clientY / window.innerHeight - .5) * 8;
-  stars.style.transform = `scale(1.06) translate(${x}px, ${y}px)`;
-});
-
-// button shimmer on hover + sound
-const shimmers = document.querySelectorAll('.btn, .ghost, .tab, .btn-nav');
-shimmers.forEach(btn=>{
-  btn.addEventListener('pointermove', (e)=>{
-    const rect = btn.getBoundingClientRect();
-    const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-    btn.style.setProperty('--mx', x + 'px');
-    btn.style.setProperty('--my', y + 'px');
-  });
-  btn.addEventListener('mouseenter', ()=>sound('hover'));
-  btn.addEventListener('click', ()=>sound('click'));
-});
-
-/* -----------------------------
-   SOUND ENGINE (WebAudio, zero files)
-------------------------------*/
-let audioCtx;
-function ac(){ if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } return audioCtx; }
-function beep(freq=440, dur=0.08, type='sine', vol=0.03){
-  const ctx = ac();
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type = type; o.frequency.value = freq;
-  g.gain.value = vol;
-  o.connect(g).connect(ctx.destination);
-  o.start();
-  o.stop(ctx.currentTime + dur);
-}
-function sweep(start=220,end=880,dur=0.5,type='sine',vol=0.02){
-  const ctx = ac(); const o = ctx.createOscillator(); const g = ctx.createGain();
-  o.type=type; o.frequency.setValueAtTime(start, ctx.currentTime);
-  o.frequency.exponentialRampToValueAtTime(end, ctx.currentTime+dur);
-  g.gain.value=vol; o.connect(g).connect(ctx.destination);
-  o.start(); o.stop(ctx.currentTime+dur);
-}
-function sound(kind){
-  if(kind==='hover') beep(660,0.05,'sine',0.02);
-  if(kind==='click') beep(220,0.06,'triangle',0.035);
-  if(kind==='shuffle'){ sweep(140,220,0.25,'square',0.02); setTimeout(()=>beep(180,0.05,'square',0.02),200); }
-  if(kind==='flip'){ sweep(300,1000,0.18,'sine',0.03); }
-}
-
-/* -----------------------------
-   TAROT ENGINE
-------------------------------*/
-const TAROT_MAJOR = [
-  {n:0,t:'The Fool',k:['new start','leap of faith','innocence'],r:['reckless','unprepared','naive']},
-  {n:1,t:'The Magician',k:['skills','manifestation','willpower'],r:['manipulation','untapped','trickery']},
-  {n:2,t:'The High Priestess',k:['intuition','mystery','inner voice'],r:['secrets','disconnection','surface']},
-  {n:3,t:'The Empress',k:['nurture','abundance','beauty'],r:['dependence','overprotect','stagnant']},
-  {n:4,t:'The Emperor',k:['structure','authority','stability'],r:['rigid','domineer','control']},
-  {n:5,t:'The Hierophant',k:['tradition','guidance','faith'],r:['rebellion','nonconform','dogma']},
-  {n:6,t:'The Lovers',k:['union','choices','alignment'],r:['disharmony','conflict','imbalance']},
-  {n:7,t:'The Chariot',k:['drive','victory','focus'],r:['scattered','aggression','stall']},
-  {n:8,t:'Strength',k:['courage','compassion','patience'],r:['self-doubt','fear','force']},
-  {n:9,t:'The Hermit',k:['soul-search','wisdom','alone time'],r:['isolation','withdraw','lost']},
-  {n:10,t:'Wheel of Fortune',k:['cycles','change','luck'],r:['resistance','bad timing','stuck']},
-  {n:11,t:'Justice',k:['fairness','truth','law'],r:['dishonesty','imbalance','bias']},
-  {n:12,t:'The Hanged One',k:['pause','surrender','new view'],r:['delay','stall','indecision']},
-  {n:13,t:'Death',k:['ending','rebirth','transition'],r:['fear change','clinging','stagnation']},
-  {n:14,t:'Temperance',k:['balance','blending','moderation'],r:['excess','conflict','extremes']},
-  {n:15,t:'The Devil',k:['bondage','shadow','attachment'],r:['release','awareness','freedom']},
-  {n:16,t:'The Tower',k:['sudden change','revelation','shakeup'],r:['avoidance','fear','denial']},
-  {n:17,t:'The Star',k:['hope','healing','faith'],r:['insecurity','cynicism','doubt']},
-  {n:18,t:'The Moon',k:['intuition','dreams','unclear'],r:['clarity','truth surfaces','ground']},
-  {n:19,t:'The Sun',k:['joy','success','vitality'],r:['temporary cloud','overexpose','ego']},
-  {n:20,t:'Judgement',k:['awakening','call','renewal'],r:['self-crit','stagnant','ignore call']},
-  {n:21,t:'The World',k:['completion','wholeness','travel'],r:['incomplete','loose ends','delay']}
-];
-// minor arcana simplified mapping
-const SUITS = [
-  {s:'Wands',emoji:'🔥',themes:'energy • action • inspiration'},
-  {s:'Cups',emoji:'💧',themes:'emotion • relationships • intuition'},
-  {s:'Swords',emoji:'⚔️',themes:'thoughts • truth • conflict'},
-  {s:'Pentacles',emoji:'🪙',themes:'work • money • body'}
-];
-const RANKS = [
-  {r:'Ace',pos:['new spark','seed potential','pure essence'],neg:['blocked start','hesitation','misfire']},
-  {r:'Two',pos:['balance','choice','duality'],neg:['indecision','stall','tension']},
-  {r:'Three',pos:['growth','teamwork','initial success'],neg:['delay','misalign','third factor']},
-  {r:'Four',pos:['stability','foundation','rest'],neg:['stagnant','rigid','comfort zone']},
-  {r:'Five',pos:['challenge','change','test'],neg:['loss','conflict','strain']},
-  {r:'Six',pos:['harmony','generosity','support'],neg:['strings attached','imbalanced','ego']},
-  {r:'Seven',pos:['assessment','strategy','faith'],neg:['doubt','impatience','avoidance']},
-  {r:'Eight',pos:['movement','mastery','progress'],neg:['monotony','burnout','overwork']},
-  {r:'Nine',pos:['resilience','near finish','protect'],neg:['paranoia','drained','wounded']},
-  {r:'Ten',pos:['completion','legacy','arrival'],neg:['burden','overload','ending pains']},
-  {r:'Page',pos:['curious','student','fresh news'],neg:['immature','gossip','restless']},
-  {r:'Knight',pos:['pursuit','momentum','mission'],neg:['impulsive','inconsistent','pushy']},
-  {r:'Queen',pos:['nurture','maturity','intuition'],neg:['overbearing','moody','closed']},
-  {r:'King',pos:['leadership','vision','control'],neg:['rigid','domineer','cold']}
-];
-
-// build full 78 deck in memory (for animations)
-function buildDeck(){
-  const deck = [];
-  TAROT_MAJOR.forEach(m=>deck.push({type:'major',id:'M'+m.n,title:m.t,meta:m}));
-  SUITS.forEach((suit,si)=>{
-    RANKS.forEach((rank,ri)=>{
-      deck.push({
-        type:'minor',
-        id:`${rank.r} of ${suit.s}`,
-        title:`${rank.r} of ${suit.s}`,
-        meta:{rank,suit}
-      });
-    });
-  });
-  return deck;
-}
-let MASTER_DECK = buildDeck();
-
-// SVG sigils per card (simple but magical)
-function cardSigilSVG(card){
-  const base = `<rect x="6" y="6" width="calc(100% - 12px)" height="calc(100% - 12px)" rx="10" ry="10" fill="url(#g1)" stroke="#ffffff22"/>`;
-  const defs = `
-  <defs>
-    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#8ec5ff22"/><stop offset="100%" stop-color="#ffd16618"/>
-    </linearGradient>
-  </defs>`;
-  const symbol = (()=>{
-    if(card.type==='major'){
-      const i = card.meta.n;
-      return `<g opacity=".95" transform="translate(0,0)">
-        <circle cx="50%" cy="45%" r="32%" fill="none" stroke="#ffd16655" stroke-width="2"/>
-        <text x="50%" y="48%" text-anchor="middle" font-size="44" fill="#e7e9ee" font-family="Playfair Display">${i}</text>
-      </g>`;
-    }else{
-      const em = card.meta.suit.emoji;
-      const rk = card.meta.rank.r;
-      return `<g opacity=".95">
-        <text x="50%" y="42%" text-anchor="middle" font-size="42">${em}</text>
-        <text x="50%" y="68%" text-anchor="middle" font-size="20" fill="#dfe6ff" font-family="Inter" font-weight="800">${rk}</text>
-      </g>`;
+    function jdFromYMDhms(y,m,dd,hh,mm,ss){
+      if(m<=2){ y-=1; m+=12; }
+      const A = Math.floor(y/100);
+      const B = 2 - A + Math.floor(A/4);
+      const day = dd + (hh + (mm + ss/60)/60)/24;
+      return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + day + B - 1524.5;
     }
-  })();
-  return `<svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">${defs}${base}${symbol}</svg>`;
-}
+    function gmstFromJD(JD){
+      const T = (JD-2451545.0)/36525;
+      let GMST = 280.46061837 + 360.98564736629*(JD-2451545) + 0.000387933*T*T - T*T*T/38710000;
+      return norm360(GMST);
+    }
+    function obliquityMean(T){
+      // arcseconds -> degrees
+      const sec = 21.448 - 46.8150*T - 0.00059*T*T + 0.001813*T*T*T; // 23°26'...
+      return 23 + 26/60 + sec/3600;
+    }
 
-const tarotStage = document.getElementById('tarotStage');
-const deckEl = document.getElementById('deck');
-const spreadEl = document.getElementById('spread');
-const spreadArea = document.getElementById('spreadArea');
-const tarotResult = document.getElementById('tarotResult');
-const tarotText = document.getElementById('tarotText');
+    // Rough Lahiri ayanamsa (good to ~0.2°). Reference ~ 23.853° @ J2000, drift ~ 50.290966''/yr
+    function ayanamsaLahiri(JD){
+      const years = (JD - 2451545.0)/365.2422; // from J2000.0
+      const base = 23.8530556; // degrees at J2000 (approx 23°51'11")
+      const drift = (50.290966/3600) * years; // deg per year
+      return base + drift; // ~24.1° around 2025
+    }
 
-let drawnCards = [];
-let animBusy = false;
+    // Local Sidereal & Ascendant
+    function ascendantLongitude(JD, latDeg, lonDeg){
+      const T = (JD-2451545.0)/36525;
+      const eps = obliquityMean(T);
+      const GMST = gmstFromJD(JD);
+      const LST = norm360(GMST + lonDeg);
+      const theta = LST*D2R, phi = latDeg*D2R, epsR = eps*D2R;
+      const num = -Math.cos(theta);
+      const den = Math.sin(theta)*Math.cos(epsR) + Math.tan(phi)*Math.sin(epsR);
+      let lambda = Math.atan2(num, den)*R2D; // degrees
+      lambda = norm360(lambda);
+      return lambda;
+    }
 
-function resetTarot(){
-  drawnCards = [];
-  deckEl.innerHTML = '';
-  spreadEl.innerHTML = '';
-  spreadArea.innerHTML = '';
-  tarotResult.style.display='none';
-  placeDeckStack();
-}
-document.getElementById('btnTarotReset').addEventListener('click', resetTarot);
+    // Sun (tropical) — Meeus low-precision
+    function sunLongitude(JD){
+      const T = (JD - 2451545.0)/36525;
+      const L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T; // mean longitude
+      const M  = 357.52911 + 35999.05029*T - 0.0001537*T*T; // mean anomaly
+      const C = (1.914602 - 0.004817*T - 0.000014*T*T)*sin(M)
+              + (0.019993 - 0.000101*T)*sin(2*M)
+              + 0.000289*sin(3*M);
+      const trueLong = L0 + C; // degrees
+      return norm360(trueLong);
+    }
 
-function placeDeckStack(){
-  const count = 18; // visual stack
-  for(let i=0;i<count;i++){
-    const c = document.createElement('div');
-    c.className='card3d';
-    c.style.translate='-50% -50%';
-    c.style.transform += ` rotate(${(Math.random()*2-1)}deg) translateZ(${i}px)`;
-    c.style.filter = `hue-rotate(${(i*6)%360}deg)`;
-    const front = document.createElement('div'); front.className='card-face card-front';
-    const back = document.createElement('div'); back.className='card-face card-back';
-    back.innerHTML = `<div class="sigil">${cardSigilSVG({type:'major',meta:{n:(i%22)}})}</div>`;
-    front.innerHTML = `<div class="sigil">${cardSigilSVG({type:'minor',meta:{suit:SUITS[i%4],rank:RANKS[i%14]}})}</div>`;
-    c.appendChild(front); c.appendChild(back);
-    deckEl.appendChild(c);
-  }
-}
-placeDeckStack();
+    // Moon (tropical) — simple series (good to ~0.5°)
+    function moonLongitude(JD){
+      const T = (JD - 2451545.0)/36525;
+      const Lp = 218.3164477 + 481267.88123421*T - 0.0015786*T*T + (T*T*T)/538841 - (T*T*T*T)/65194000;
+      const D  = 297.8501921 + 445267.1114034*T - 0.0018819*T*T + (T*T*T)/545868 - (T*T*T*T)/113065000;
+      const M  = 357.5291092 + 35999.0502909*T - 0.0001536*T*T + (T*T*T)/24490000;
+      const Mp = 134.9633964 + 477198.8675055*T + 0.0087414*T*T + (T*T*T)/69699 - (T*T*T*T)/14712000;
+      const F  = 93.2720950  + 483202.0175233*T - 0.0036539*T*T - (T*T*T)/3526000 + (T*T*T*T)/863310000;
+      // very small set of terms
+      let lon = Lp
+        + 6.289 * sin(Mp)
+        + 1.274 * sin(2*D - Mp)
+        + 0.658 * sin(2*D)
+        + 0.213 * sin(2*Mp)
+        - 0.185 * sin(M)
+        - 0.114 * sin(2*F);
+      return norm360(lon);
+    }
 
-// spread slot coordinates
-function getSpreadSlots(kind){
-  const w = tarotStage.clientWidth, h = tarotStage.clientHeight;
-  const cx = w/2, cy = h/2;
-  const gap = 160;
-  const slots=[];
-  if(kind==='one'){
-    slots.push({x:cx-70,y:cy-110,rot:0,label:'Focus'});
-  }else if(kind==='three'){
-    [-1,0,1].forEach((i,idx)=>{
-      slots.push({x:cx-70 + i*gap, y:cy-110, rot:(i*2), label:['Past','Present','Future'][idx]});
-    });
-  }else if(kind==='five'){
-    // cross-like
-    slots.push({x:cx-70,y:cy-110,rot:0,label:'Situation'});
-    slots.push({x:cx-70-gap,y:cy-110,rot:-6,label:'Challenge'});
-    slots.push({x:cx-70+gap,y:cy-110,rot:6,label:'Advice'});
-    slots.push({x:cx-70,y:cy-110-140,rot:0,label:'Hidden'});
-    slots.push({x:cx-70,y:cy-110+140,rot:0,label:'Outcome'});
-  }else{ // celtic (compact 10)
-    const dx = 140, dy = 120;
-    const baseX = cx-70 - dx, baseY = cy-180;
-    const pos = [
-      [0,0,'You'], [1,0,'Crossing'], [0,1,'Foundation'], [0,2,'Recent Past'],
-      [1,1,'Crown'], [1,2,'Near Future'], [2,0,'Self'], [2,1,'Environment'],
-      [2,2,'Hopes/Fears'], [3,1,'Outcome']
-    ];
-    pos.forEach(([ix,iy,label],i)=>{
-      slots.push({x: baseX+ix*dx, y: baseY+iy*dy, rot:(i%2?4:-2), label});
-    });
-  }
-  return slots;
-}
+    // Very lightweight approximate longitudes for visible planets (tropical)
+    // Using mean motions around J2000; good mostly for sign / house placement.
+    function approxPlanetLongitude(JD, planet){
+      const days = JD - 2451545.0;
+      // Mean longitudes at J2000 (deg) + mean daily motion (deg/day) — coarse
+      const map = {
+        Mercury: { L0: 252.25084, n: 4.09233445 }, // 360/87.969
+        Venus:   { L0: 181.97973, n: 1.60213034 }, // 360/224.701
+        Mars:    { L0: 355.43300, n: 0.524039  },  // 360/686.98
+        Jupiter: { L0: 34.351484, n: 0.083091  },  // 360/4332.59
+        Saturn:  { L0: 50.077471, n: 0.033497  }   // 360/10759.22
+      };
+      const p = map[planet];
+      if(!p) return 0;
+      return norm360(p.L0 + p.n * days);
+    }
 
-// draw animation + logic
-document.getElementById('btnTarotDraw').addEventListener('click', async ()=>{
-  if(animBusy) return;
-  animBusy = true;
-  sound('shuffle');
+    // Rahu/Ketu (tropical) from mean node of the Moon
+    function meanNodeLongitude(JD){
+      const T = (JD - 2451545.0)/36525;
+      let Omega = 125.04452 - 1934.136261*T + 0.0020708*T*T + (T*T*T)/450000; // deg
+      return norm360(Omega);
+    }
 
-  // shuffle deck logically
-  const localDeck = [...MASTER_DECK];
-  for(let i=localDeck.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [localDeck[i],localDeck[j]] = [localDeck[j],localDeck[i]];
-  }
+    // ---------- Vedic helpers ----------
+    const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const SIGN_ABBR = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+    const PLANET_ABBR = { Sun:'Su', Moon:'Mo', Mars:'Ma', Mercury:'Me', Jupiter:'Ju', Venus:'Ve', Saturn:'Sa', Rahu:'Ra', Ketu:'Ke', Ascendant:'As' };
 
-  // decide number of cards
-  const spreadKind = document.getElementById('tarotSpread').value;
-  const slots = getSpreadSlots(spreadKind);
-  const need = slots.length;
+    const HOUSE_CELL = {1:[3,1],2:[2,1],3:[1,2],4:[1,3],5:[1,4],6:[2,5],7:[3,5],8:[5,5],9:[6,4],10:[6,3],11:[6,2],12:[5,1]};
+    function cellStyle(r,c){return `grid-row:${r};grid-column:${c};`}
 
-  // clear previous spread
-  spreadEl.innerHTML=''; spreadArea.innerHTML='';
-  tarotResult.style.display='none';
-  drawnCards = [];
-
-  // create slots labels
-  slots.forEach(s=>{
-    const slot = document.createElement('div');
-    slot.className='slot';
-    slot.style.left = s.x+'px'; slot.style.top = s.y+'px';
-    spreadArea.appendChild(slot);
-    const tag = document.createElement('div');
-    tag.className='float-card';
-    tag.style.position='absolute'; tag.style.left = (s.x)+'px'; tag.style.top = (s.y-32)+'px';
-    tag.textContent = s.label;
-    spreadEl.appendChild(tag);
-  });
-
-  // animate deal
-  for(let i=0;i<need;i++){
-    const base = document.createElement('div');
-    base.className='card3d';
-    base.style.left='50%'; base.style.top='50%'; base.style.translate='-50% -50%';
-    base.style.rotate='0deg'; base.style.transitionDelay = (i*0.08)+'s';
-    const front = document.createElement('div'); front.className='card-face card-front';
-    const back = document.createElement('div'); back.className='card-face card-back';
-    // placeholder back sigil
-    back.innerHTML = `<div class="sigil">${cardSigilSVG({type:'major',meta:{n:(i%22)}})}</div>`;
-    base.appendChild(front); base.appendChild(back);
-    tarotStage.appendChild(base);
-
-    // choose a card
-    const card = localDeck[i];
-    // upright or reversed randomly
-    const reversed = Math.random()<0.45;
-    // prepare front content
-    front.innerHTML = `<div class="sigil">${cardSigilSVG(card)}</div><div class="title">${card.title}${reversed?' (Reversed)':''}</div>`;
-
-    // fly to slot
-    const s = slots[i];
-    const rot = s.rot + (Math.random()*6-3);
-    setTimeout(()=>{
-      base.style.translate='0 0';
-      base.style.left = (s.x+70)+'px';
-      base.style.top = (s.y+110)+'px';
-      base.style.transform = `perspective(900px) rotateX(7deg) rotateY(-6deg)`;
-      base.style.rotate = rot+'deg';
-      base.style.boxShadow='0 26px 70px #000a';
-    }, 80*i + 80);
-
-    // flip on reveal
-    setTimeout(()=>{
-      sound('flip');
-      base.style.transition='transform .7s cubic-bezier(.2,.9,.15,1), rotate .7s cubic-bezier(.2,.9,.15,1), box-shadow .4s ease';
-      base.style.transform = `perspective(900px) rotateY(180deg)`;
-      if(reversed){
-        base.style.transform += ' rotateZ(180deg)';
+    function resetChart(){
+      const g=document.getElementById('grid');
+      g.innerHTML='';
+      for(let h=1;h<=12;h++){
+        const [r,c]=HOUSE_CELL[h];
+        const el=document.createElement('div');
+        el.style=cellStyle(r,c);
+        el.innerHTML=`<div class="house p-1"><div class="label">H${h}</div><div id="house-${h}" class="text-xs leading-4"></div></div>`;
+        g.appendChild(el);
       }
-      // store drawn
-      drawnCards.push({...card, reversed, slotLabel:s.label});
-    }, 350 + i*220);
-  }
-
-  // after animation, compose reading
-  setTimeout(()=>{
-    const q = (document.getElementById('tarotQuestion').value||'').trim();
-    const mode = document.getElementById('tarotMode').value;
-    if(mode==='online' && (document.getElementById('tarotApi').value||'').trim()){
-      tarotOnline(q, drawnCards).then(html=>{
-        tarotText.innerHTML = html;
-        tarotResult.style.display='block';
-      }).catch(()=>{
-        tarotText.innerHTML = tarotOfflineCompose(q, drawnCards);
-        tarotResult.style.display='block';
-      });
-    }else{
-      tarotText.innerHTML = tarotOfflineCompose(q, drawnCards);
-      tarotResult.style.display='block';
     }
-    animBusy=false;
-  }, 900 + need*260);
-});
-
-// online tarot (optional)
-async function tarotOnline(question, cards){
-  const endpoint = document.getElementById('tarotApi').value.trim();
-  const key = document.getElementById('tarotKey').value.trim();
-  const payload = {
-    question,
-    cards: cards.map(c=>({title:c.title, reversed:c.reversed, slot:c.slotLabel}))
-  };
-  const res = await fetch(endpoint, {
-    method:'POST',
-    headers:{'Content-Type':'application/json', ...(key?{'Authorization':`Bearer ${key}`}:{})},
-    body: JSON.stringify(payload)
-  });
-  if(!res.ok) throw new Error('API error');
-  const data = await res.json();
-  // expect { html?: string, text?: string }
-  return data.html || `<p>${(data.text||'No response')}</p>`;
-}
-
-// offline reading composer
-function tarotOfflineCompose(question, cards){
-  function explain(c){
-    if(c.type==='major'){
-      const k = c.reversed ? c.meta.r: c.meta.k;
-      return `<span class="hl">${c.title}</span> suggests <b>${k[0]}</b>, also pointing to ${k.slice(1).join(', ')}.`;
-    }else{
-      const themes = c.meta.suit.themes;
-      const k = c.reversed ? c.meta.rank.neg : c.meta.rank.pos;
-      return `<span class="hl">${c.title}</span> (${c.meta.suit.emoji} ${themes}) speaks of <b>${k[0]}</b> — with shades of ${k.slice(1).join(', ')}.`;
+    function putInHouse(house,text){
+      const el=document.getElementById('house-'+house); if(!el) return;
+      const span=document.createElement('span'); span.className='tag'; span.textContent=text; el.appendChild(span);
     }
-  }
-  const head = question? `<p><b>Question:</b> ${question}</p>` : '';
-  const lines = cards.map(c=>`<p><b>${c.slotLabel}:</b> ${explain(c)}</p>`).join('');
-  const tone = (()=>{
-    const majors = cards.filter(c=>c.type==='major').length;
-    if(majors>=3) return 'This reading carries major life lessons. Move with awareness and faith.';
-    if(cards.some(c=>c.title.includes('The Sun')||c.title.includes('The Star'))) return 'A positive, healing current runs through this reading.';
-    if(cards.some(c=>c.title.includes('The Tower')||c.title.includes('Death'))) return 'Change brings truth. Release the old; embrace the new.';
-    return 'Your path is clarifying—balance action with reflection.';
-  })();
-  return `${head}${lines}<p class="mt-16">${tone}</p>`;
-}
 
-/* -----------------------------
-   NUMEROLOGY ENGINE
-------------------------------*/
-const MAPS = {
-  pythagorean: {'A':1,'J':1,'S':1,'B':2,'K':2,'T':2,'C':3,'L':3,'U':3,'D':4,'M':4,'V':4,'E':5,'N':5,'W':5,'F':6,'O':6,'X':6,'G':7,'P':7,'Y':7,'H':8,'Q':8,'Z':8,'I':9,'R':9},
-  chaldean:    {'A':1,'I':1,'J':1,'Q':1,'Y':1,'B':2,'K':2,'R':2,'C':3,'G':3,'L':3,'S':3,'D':4,'M':4,'T':4,'E':5,'H':5,'N':5,'X':5,'U':6,'V':6,'W':6,'O':7,'Z':7,'F':8,'P':8}
-};
-const VOWELS = new Set(['A','E','I','O','U','Y']);
-
-function sumDigits(n){ n = Math.abs(n); let s=0; for(const d of String(n)) s+= +d; return s; }
-function reduceNum(n, keepMasters=true){ while(n>9 && (!keepMasters || (n!==11 && n!==22 && n!==33))){ n=sumDigits(n); } return n; }
-function nameNumber(name, map){
-  let letters = name.toUpperCase().replace(/[^A-Z]/g,'').split('');
-  let total=0, soul=0, persona=0;
-  for(const ch of letters){
-    const val = map[ch]||0;
-    total += val;
-    if(VOWELS.has(ch)) soul += val; else persona += val;
-  }
-  return {total, soul, persona};
-}
-function calcPinnaclesChallenges(d){
-  // simple Pythagorean style using month/day/year reduced
-  const [y,m,dd] = d.split('-').map(x=>+x);
-  const rm = reduceNum(m), rd = reduceNum(dd), ry = reduceNum(y);
-  const pin1 = reduceNum(rm + rd);
-  const pin2 = reduceNum(rd + ry);
-  const pin3 = reduceNum(pin1 + pin2);
-  const pin4 = reduceNum(rm + ry);
-  const ch1 = Math.abs(rm - rd) || 0;
-  const ch2 = Math.abs(rd - ry) || 0;
-  const ch3 = Math.abs(pin1 - pin2) || 0;
-  const ch4 = Math.abs(rm - ry) || 0;
-  return {
-    pinnacles:[pin1,pin2,pin3,pin4].map(n=>reduceNum(n)),
-    challenges:[ch1,ch2,ch3,ch4].map(n=>reduceNum(n,false))
-  };
-}
-function loShuGrid(d){
-  const digits = d.replace(/-/g,'').split('').map(Number);
-  const freq = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-  digits.forEach(n=>{ if(n===0) return; freq[n]++; });
-  return freq;
-}
-
-document.getElementById('btnNumCalc').addEventListener('click', ()=>{
-  const name = (document.getElementById('numName').value||'').trim();
-  const dob = document.getElementById('numDob').value;
-  const sys = document.getElementById('numSystem').value;
-  if(!dob){ alert('Please select Date of Birth.'); return; }
-
-  const map = MAPS[sys];
-  const {total,soul,persona} = nameNumber(name, map);
-  const lifePath = reduceNum(+dob.replace(/-/g,''));
-  const destiny = reduceNum(total);
-  const soulUrge = reduceNum(soul);
-  const personality = reduceNum(persona);
-  const maturity = reduceNum(lifePath + destiny);
-  const {pinnacles, challenges} = calcPinnaclesChallenges(dob);
-  const grid = loShuGrid(dob);
-
-  const out = document.getElementById('numOutput');
-  out.innerHTML = `
-    <div class="mini"><b>Life Path:</b> <span class="hl">${lifePath}</span> — how you walk your big journey.</div>
-    <div class="mini"><b>Destiny (Expression):</b> <span class="hl">${destiny}</span> — talents you bring to the world.</div>
-    <div class="mini"><b>Soul Urge (Heart's Desire):</b> <span class="hl">${soulUrge}</span> — what your soul truly seeks.</div>
-    <div class="mini"><b>Personality:</b> <span class="hl">${personality}</span> — how others first perceive you.</div>
-    <div class="mini"><b>Maturity:</b> <span class="hl">${maturity}</span> — your later-life blend of Life Path + Destiny.</div>
-    <div class="mini"><b>Pinnacles:</b> ${pinnacles.map((p,i)=>`<span class="hl">${p}</span>${i<3?' • ':''}`).join('')}<br/>
-      <b>Challenges:</b> ${challenges.map((c,i)=>`<span class="hl">${c}</span>${i<3?' • ':''}`).join('')}
-    </div>
-    <div class="mini">
-      <b>Lo Shu Grid (1–9 counts):</b><br/>
-      ${[1,2,3,4,5,6,7,8,9].map(n=>`${n}: <b>${grid[n]}</b>`).join(' • ')}
-    </div>
-  `;
-  sound('click');
-});
-document.getElementById('btnNumReset').addEventListener('click', ()=>{
-  document.getElementById('numOutput').innerHTML='';
-});
-
-/* -----------------------------
-   KUNDLI (Illustrative offline + optional online)
-------------------------------*/
-// simple deterministic sign placement based on date
-const SIGNS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
-function hashToSign(dateStr, seed=0){
-  let h = seed;
-  for(const ch of dateStr) h = ((h<<5)-h) + ch.charCodeAt(0);
-  h = Math.abs(h);
-  return SIGNS[h % 12];
-}
-function illustrativePlanets(dateStr){
-  // deterministic but fake positions; shows consistent, readable chart
-  return {
-    Lagna: hashToSign(dateStr,1),
-    Sun:   hashToSign(dateStr,2),
-    Moon:  hashToSign(dateStr,3),
-    Mars:  hashToSign(dateStr,4),
-    Mercury:hashToSign(dateStr,5),
-    Jupiter:hashToSign(dateStr,6),
-    Venus: hashToSign(dateStr,7),
-    Saturn:hashToSign(dateStr,8),
-    Rahu:  hashToSign(dateStr,9),
-    Ketu:  hashToSign(dateStr,10),
-  };
-}
-function buildVedicGrid(planets){
-  // North Indian style-like 3x3 boxes (simplified)
-  const houses = Array.from({length:9},(_,i)=>({idx:i+1, items:[]}));
-  const signIndex = s=>SIGNS.indexOf(s);
-  // place planets by sign ordinal (fold into 9 boxes for display)
-  Object.entries(planets).forEach(([p,sign])=>{
-    const box = (signIndex(sign) % 9); // illustrative packing
-    houses[box].items.push(p);
-  });
-  return houses;
-}
-function dashaFromDate(dateStr){
-  // illustrative Vimshottari-like segments totalling ~18 years
-  const seeds = ['Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus'];
-  let h=0; for(const ch of dateStr) h=((h<<5)-h)+ch.charCodeAt(0); h=Math.abs(h);
-  const start = h%seeds.length;
-  const out=[];
-  const lens = {Sun:6, Moon:10, Mars:7, Rahu:18, Jupiter:16, Saturn:19, Mercury:17, Ketu:7, Venus:20}; // months (scaled)
-  let year=0, month=0;
-  for(let i=0;i<6;i++){
-    const lord = seeds[(start+i)%seeds.length];
-    const months = Math.floor(lens[lord]/2)+6; // compressed length
-    out.push({lord,from:`+${year}y ${month}m`, to:`+${year + Math.floor((month+months)/12)}y ${(month+months)%12}m`});
-    month += months; year += Math.floor(month/12); month = month%12;
-  }
-  return out;
-}
-function kundliInterpret(planets, name){
-  const tones = [];
-  if(['Sun','Jupiter','Venus'].some(p=>planets[p]===planets.Lagna)) tones.push('Strong self-expression & guidance energy.');
-  if(planets.Moon===planets.Venus) tones.push('Emotional sensitivity blends with love/beauty—nurture relationships.');
-  if(planets.Saturn===planets.Mars) tones.push('Discipline meets drive—be patient with yourself.');
-  if(!tones.length) tones.push('Balanced chart—small, steady improvements bring results.');
-  return `<p><b>${name||'You'}:</b> ${tones.join(' ')}</p>
-  <p>This is an <i>illustrative</i> chart for offline mode. For precise degrees and dashas, use Online API mode.</p>`;
-}
-
-document.getElementById('btnKundli').addEventListener('click', async ()=>{
-  const name = (document.getElementById('kName').value||'').trim();
-  const date = document.getElementById('kDate').value;
-  const time = document.getElementById('kTime').value || '12:00';
-  const city = (document.getElementById('kCity').value||'').trim();
-  const mode = document.getElementById('kMode').value;
-  const endpoint = (document.getElementById('kApi').value||'').trim();
-  const key = (document.getElementById('kKey').value||'').trim();
-
-  if(!date){ alert('Please select Birth Date'); return; }
-
-  document.getElementById('kundliWrap').style.display='block';
-  const kd = document.getElementById('kundliGrid');
-  const note = document.getElementById('kundliNote');
-  const dasha = document.getElementById('dashaList');
-  const txt = document.getElementById('kundliText');
-  kd.innerHTML=''; dasha.innerHTML=''; txt.innerHTML='';
-
-  let planets;
-  if(mode==='online' && endpoint){
-    try{
-      const res = await fetch(endpoint,{
-        method:'POST',
-        headers:{'Content-Type':'application/json', ...(key?{'Authorization':`Bearer ${key}`}:{})},
-        body: JSON.stringify({name,date,time,city})
-      });
-      if(!res.ok) throw new Error('API error');
-      const data = await res.json();
-      // expect: { planets: {Sun:'Ar',...}, dasha:[{lord,from,to}], note:string, interpretation:string }
-      planets = data.planets || illustrativePlanets(date);
-      (data.dasha||[]).forEach(it=>{
-        const row = document.createElement('div'); row.className='dasha-item';
-        row.innerHTML = `<span><b>${it.lord}</b></span><span>${it.from} → ${it.to}</span>`;
-        dasha.appendChild(row);
-      });
-      kd.append(...buildKBoxes(planets));
-      note.textContent = data.note || 'Online API result.';
-      txt.innerHTML = data.interpretation || kundliInterpret(planets, name);
-      sound('click');
-      return;
-    }catch(e){
-      // fall through to offline
+    function toSidereal(tropicalLon, JD, ayanaMode){
+      if(ayanaMode==='tropical') return norm360(tropicalLon);
+      const ay = ayanamsaLahiri(JD);
+      return norm360(tropicalLon - ay);
     }
-  }
 
-  planets = illustrativePlanets(date);
-  kd.append(...buildKBoxes(planets));
-  const dash = dashaFromDate(date);
-  dash.forEach(it=>{
-    const row = document.createElement('div'); row.className='dasha-item';
-    row.innerHTML = `<span><b>${it.lord}</b></span><span>${it.from} → ${it.to}</span>`;
-    dasha.appendChild(row);
-  });
-  note.textContent = 'Offline illustrative kundli (deterministic). For precise result, use Online API mode.';
-  txt.innerHTML = kundliInterpret(planets, name);
-  sound('click');
-});
+    function signIndex(lon){ return Math.floor(norm360(lon)/30); }
 
-function buildKBoxes(planets){
-  const houses = buildVedicGrid(planets);
-  return houses.map(h=>{
-    const dv = document.createElement('div'); dv.className='house';
-    dv.innerHTML = `<div class="idx">House ${h.idx}</div><div class="planets">${h.items.join(' • ')||'-'}</div>`;
-    return dv;
-  });
-}
-document.getElementById('btnKundliReset').addEventListener('click', ()=>{
-  document.getElementById('kundliWrap').style.display='none';
-});
-
-/* -----------------------------
-   AI GUIDANCE (offline rules + optional online)
-------------------------------*/
-document.getElementById('btnAI').addEventListener('click', async ()=>{
-  const mode = document.getElementById('aiMode').value;
-  const prompt = (document.getElementById('aiPrompt').value||'').trim();
-  const out = document.getElementById('aiOut');
-  const txt = document.getElementById('aiText');
-  out.style.display='block';
-  txt.innerHTML = '<p>Generating...</p>';
-
-  if(mode==='online' && (document.getElementById('aiApi').value||'').trim()){
-    try{
-      const endpoint = document.getElementById('aiApi').value.trim();
-      const key = (document.getElementById('aiKey').value||'').trim();
-      const res = await fetch(endpoint,{
-        method:'POST',
-        headers:{'Content-Type':'application/json', ...(key?{'Authorization':`Bearer ${key}`}:{})},
-        body: JSON.stringify({
-          prompt: prompt || offlineContextPrompt(),
-          context: offlineContextPrompt(),
-        })
+    function showPlanets(list){
+      const wrap=document.getElementById('planetList'); wrap.innerHTML='';
+      list.forEach(p=>{
+        const div=document.createElement('div'); div.className='tag mono';
+        const deg = (p.lon%30).toFixed(2).padStart(5,'0');
+        div.textContent=`${PLANET_ABBR[p.name]||p.name}: ${SIGN_ABBR[p.sign]} ${deg}°`;
+        wrap.appendChild(div);
       });
-      if(!res.ok) throw new Error('API error');
-      const data = await res.json();
-      txt.innerHTML = `<p>${(data.text||data.output||'No response').toString().replace(/\n/g,'<br/>')}</p>`;
-      sound('click');
-      return;
-    }catch(e){
-      // fallback offline
     }
-  }
-  // offline
-  txt.innerHTML = offlineGuidance(prompt);
-  sound('click');
-});
 
-document.getElementById('btnAIReset').addEventListener('click', ()=>{
-  document.getElementById('aiOut').style.display='none';
-  document.getElementById('aiText').innerHTML='';
-});
+    function setDebug(obj){ document.getElementById('debug').textContent = JSON.stringify(obj,null,2); }
 
-function offlineContextPrompt(){
-  const q = (document.getElementById('tarotQuestion').value||'').trim();
-  const cards = drawnCards.map(c=>`${c.slotLabel}: ${c.title}${c.reversed?' (Reversed)':''}`).join(' | ');
-  const name = (document.getElementById('numName').value||'').trim();
-  const dob = (document.getElementById('numDob').value||'').trim();
-  return `Question: ${q||'N/A'} | Cards: ${cards||'N/A'} | Name: ${name||'N/A'} | DOB: ${dob||'N/A'}`;
-}
-function offlineGuidance(prompt){
-  const q = (document.getElementById('tarotQuestion').value||'').trim();
-  // tone based on draws + numerology
-  const good = drawnCards.some(c=>/Sun|Star|World|Empress|Strength/.test(c.title));
-  const tough = drawnCards.some(c=>/Tower|Devil|Death|Five|Ten of Swords/.test(c.title));
-  const name = (document.getElementById('numName').value||'You');
-  const dob = document.getElementById('numDob').value||'';
-  let lp = '';
-  if(dob){ lp = reduceNum(+dob.replace(/-/g,'')); }
+    // ---------- Main compute ----------
+    function compute(payload){
+      // Build JD at UTC from local date/time and offset
+      const [Y,M,D] = payload.date.split('-').map(Number);
+      const [hh,mm] = payload.time.split(':').map(Number);
+      const utcHour = hh - payload.tz; // tz in hours
+      // split utcHour into h:m:s safely
+      const uh = Math.floor(utcHour);
+      const um = Math.round((utcHour-uh)*60);
+      const JD = jdFromYMDhms(Y,M,D,uh,um,0);
+      const T = (JD-2451545)/36525;
 
-  const intro = `<p><b>${name}</b>, here’s a grounded view derived from your cards & numbers${q?` for: <i>${q}</i>`:''}.</p>`;
-  const trend = good? 'Uplifted, supportive energies are active.' : tough? 'Tough lessons are purifying the path.' : 'Neutral-to-positive momentum is forming.';
-  const numLine = lp? `Your Life Path <b>${lp}</b> asks you to align actions with inner values.` : '';
-  const focus = drawnCards.slice(0,3).map(c=>`<li><b>${c.title}</b>: ${c.reversed?'resolve the reversal by re-framing patterns':'lean into its upright gifts'}.</li>`).join('');
-  const steps = `<ol>
-      <li>Define one clear goal for the next 2 weeks.</li>
-      <li>Take 3 small actions that move energy forward.</li>
-      <li>Release one outdated belief or habit.</li>
-    </ol>`;
-  return `${intro}
-    <p>${trend} ${numLine}</p>
-    <p><b>Highlights:</b></p>
-    <ul>${focus||'<li>Draw cards to get highlights.</li>'}</ul>
-    <p><b>Next Steps:</b></p>
-    ${steps}
-    <p class="mt-16">Remember: Tarot reflects your current energy. When you act with clarity, outcomes shift in your favor.</p>`;
-}
+      // Tropical longitudes
+      const sunTrop = sunLongitude(JD);
+      const moonTrop = moonLongitude(JD);
+      const mercTrop = approxPlanetLongitude(JD,'Mercury');
+      const venTrop  = approxPlanetLongitude(JD,'Venus');
+      const marsTrop = approxPlanetLongitude(JD,'Mars');
+      const jupTrop  = approxPlanetLongitude(JD,'Jupiter');
+      const satTrop  = approxPlanetLongitude(JD,'Saturn');
+      const rahuTrop = meanNodeLongitude(JD); // Rahu as mean node
+      const ketuTrop = norm360(rahuTrop + 180);
 
-/* -----------------------------
-   INIT
-------------------------------*/
-resetTarot();
-</script>
+      const ascTrop  = ascendantLongitude(JD, payload.lat, payload.lon);
+
+      const ay = ayanamsaLahiri(JD);
+      const ayLabel = payload.ayana==='tropical' ? '0.00°' : ay.toFixed(2)+'°';
+      document.getElementById('ayanTag').textContent = 'Ayanāṁśa: ' + (payload.ayana==='tropical'?'Tropical':`Lahiri ${ayLabel}`);
+
+      // Convert to sidereal if needed
+      const toSid = L => toSidereal(L, JD, payload.ayana);
+      const ascSid = toSid(ascTrop);
+      const list = [
+        {name:'Ascendant', lon:ascSid},
+        {name:'Sun', lon: toSid(sunTrop)},
+        {name:'Moon', lon: toSid(moonTrop)},
+        {name:'Mercury', lon: toSid(mercTrop)},
+        {name:'Venus', lon: toSid(venTrop)},
+        {name:'Mars', lon: toSid(marsTrop)},
+        {name:'Jupiter', lon: toSid(jupTrop)},
+        {name:'Saturn', lon: toSid(satTrop)},
+        {name:'Rahu', lon: toSid(rahuTrop)},
+        {name:'Ketu', lon: toSid(ketuTrop)}
+      ].map(p=> ({...p, sign: signIndex(p.lon)}));
+
+      return { JD, ay, asc: ascSid, planets:list };
+    }
+
+    function render(result){
+      resetChart();
+      const ascSign = signIndex(result.asc);
+      document.getElementById('ascTag').textContent = 'Lagna: ' + SIGN_ABBR[ascSign];
+      // place sign labels per house
+      for(let h=1;h<=12;h++){
+        const sign = (ascSign + (h-1)) % 12; // sign at house h
+        putInHouse(h, SIGN_ABBR[sign]);
+      }
+      // place planets
+      result.planets.forEach(p=>{
+        const house = ((p.sign - ascSign + 12)%12)+1;
+        putInHouse(house, PLANET_ABBR[p.name]||p.name);
+      });
+
+      showPlanets(result.planets.filter(p=>p.name!=='Ascendant'));
+      setDebug(result);
+    }
+
+    // ---------- UI wiring ----------
+    function $(id){return document.getElementById(id)}
+    $('geoBtn').addEventListener('click',()=>{
+      if(!navigator.geolocation){alert('Geolocation not supported');return}
+      navigator.geolocation.getCurrentPosition(pos=>{
+        $('lat').value = pos.coords.latitude.toFixed(6);
+        $('lon').value = pos.coords.longitude.toFixed(6);
+        // try current zone
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if(tz==='Asia/Kolkata') $('tz').value = 5.5;
+      },err=>alert(err.message));
+    });
+
+    $('form').addEventListener('submit',e=>{
+      e.preventDefault();
+      const payload={
+        date:$('dob').value,
+        time:$('tob').value,
+        tz: parseFloat($('tz').value),
+        lat: parseFloat($('lat').value),
+        lon: parseFloat($('lon').value),
+        ayana: $('ayana').value
+      };
+      try{
+        const res=compute(payload);
+        render(res);
+      }catch(err){
+        console.error(err); alert('Error: '+err.message);
+      }
+    });
+
+    // initial chart grid
+    resetChart();
+  </script>
 </body>
 </html>

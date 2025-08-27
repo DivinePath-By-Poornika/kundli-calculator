@@ -3,45 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Accurate Kundli Generator</title>
+<title>Kundli Generator</title>
 <style>
-  body {font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; color: #222;}
+  body {font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; color: #333;}
   h1 {text-align: center;}
   .container {max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
-  .chart {display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 300px; height: 300px; margin: 20px auto; border: 2px solid #222; position: relative;}
-  .chart div {display: flex; justify-content: center; align-items: center; font-size: 14px; text-align: center;}
-  .table-container {margin-top: 20px;}
-  table {width: 100%; border-collapse: collapse; margin-top: 10px;}
-  th, td {border: 1px solid #ccc; padding: 8px; text-align: center;}
-  button {padding: 10px 15px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin: 5px;}
+  .form-group {margin: 10px 0;}
+  label {display: inline-block; width: 150px; font-weight: bold;}
+  input {padding: 5px; width: calc(100% - 160px);}
+  button {padding: 10px 15px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px;}
   button:hover {background: #0056b3;}
-  .controls {text-align: center; margin-bottom: 15px;}
+  .chart {display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 300px; height: 300px; margin: 20px auto; border: 2px solid #000; position: relative;}
+  .chart div {display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #ccc;}
+  table {width: 100%; border-collapse: collapse; margin-top: 20px;}
+  th, td {border: 1px solid #ccc; padding: 8px; text-align: center;}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>Kundli Generator</h1>
-<div class="controls">
-  <label>Date of Birth: <input type="date" id="dob"></label>
-  <label>Time of Birth: <input type="time" id="tob"></label>
-  <label>Time Zone (e.g. 5.5): <input type="number" id="tz" value="5.5"></label>
-  <br>
-  <label>Latitude: <input type="number" id="lat" step="0.0001"></label>
-  <label>Longitude: <input type="number" id="lon" step="0.0001"></label>
-  <br>
-  <button onclick="autoLocation()">Use Current Location</button>
+<div class="form-group">
+  <label>Date of Birth:</label><input type="date" id="dob">
+</div>
+<div class="form-group">
+  <label>Time of Birth:</label><input type="time" id="tob">
+</div>
+<div class="form-group">
+  <label>Time Zone (e.g. 5.5):</label><input type="number" id="tz" value="5.5">
+</div>
+<div class="form-group">
+  <label>Latitude:</label><input type="number" id="lat" step="0.0001">
+</div>
+<div class="form-group">
+  <label>Longitude:</label><input type="number" id="lon" step="0.0001">
+</div>
+<div>
+  <button onclick="autoLocation()">Use My Location</button>
   <button onclick="generateKundli()">Generate Kundli</button>
 </div>
 <div class="chart" id="chart"></div>
-<div class="table-container">
-  <h2>Planetary Positions</h2>
-  <table>
-    <thead>
-      <tr><th>Planet</th><th>Sign</th><th>Degree</th><th>House</th></tr>
-    </thead>
-    <tbody id="planetTable"></tbody>
-  </table>
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>Planet</th>
+      <th>Sign</th>
+      <th>Degree</th>
+      <th>House</th>
+    </tr>
+  </thead>
+  <tbody id="planetTable"></tbody>
+</table>
 </div>
 <script>
 const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
@@ -53,7 +64,9 @@ function autoLocation(){
       document.getElementById('lat').value = pos.coords.latitude.toFixed(4);
       document.getElementById('lon').value = pos.coords.longitude.toFixed(4);
     });
-  } else { alert("Geolocation not supported"); }
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
 }
 
 function generateKundli(){
@@ -64,51 +77,27 @@ function generateKundli(){
   const lon = parseFloat(document.getElementById('lon').value);
 
   if(!dob || !tob || isNaN(lat) || isNaN(lon)){
-    alert("Please fill all details correctly."); return;
+    alert("Please fill all details correctly.");
+    return;
   }
-
-  const dateParts = dob.split('-');
-  const timeParts = tob.split(':');
-  const year = parseInt(dateParts[0]);
-  const month = parseInt(dateParts[1]);
-  const day = parseInt(dateParts[2]);
-  const hour = parseInt(timeParts[0]);
-  const minute = parseInt(timeParts[1]);
-
-  const jd = calcJulianDay(year, month, day, hour - tz, minute);
-
-  const asc = calcAscendant(jd, lat, lon);
 
   const chartDiv = document.getElementById('chart');
   chartDiv.innerHTML = "";
-
   for(let i=1;i<=9;i++){
     const d = document.createElement('div');
-    d.innerText = i===5?"Asc":"";
+    d.innerText = i === 5 ? "Asc" : "";
     chartDiv.appendChild(d);
   }
 
   const tbody = document.getElementById('planetTable');
   tbody.innerHTML = "";
-
-  planets.forEach((p,i)=>{
+  planets.forEach(p => {
     const deg = (Math.random()*360).toFixed(2);
     const signIndex = Math.floor(deg/30);
-    const house = ((signIndex+1) - Math.floor(asc/30)+12)%12+1;
+    const house = ((signIndex+1)%12)+1;
     const tr = `<tr><td>${p}</td><td>${signs[signIndex]}</td><td>${deg}°</td><td>${house}</td></tr>`;
     tbody.innerHTML += tr;
   });
-}
-
-function calcJulianDay(y,m,d,h,min){
-  if(m<=2){y-=1;m+=12;}
-  const A = Math.floor(y/100);
-  const B = 2 - A + Math.floor(A/4);
-  return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + B - 1524.5 + (h+min/60)/24;
-}
-
-function calcAscendant(jd, lat, lon){
-  return ((jd % 1)*360 + lon + lat)%360; // Simplified for demo, can refine
 }
 </script>
 </body>

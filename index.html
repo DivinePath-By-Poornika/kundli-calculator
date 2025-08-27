@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lightweight Kundli (Offline · No API)</title>
+  <title>Offline Kundli (Accurate D1) — Single File</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config={theme:{extend:{colors:{primary:'#7c3aed',panel:'#0b1220'},boxShadow:{soft:'0 10px 30px rgba(0,0,0,.12)'}}}};
+    tailwind.config={theme:{extend:{colors:{primary:'#7c3aed'},boxShadow:{soft:'0 10px 30px rgba(0,0,0,.12)'}}}};
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji"}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
     .chart{position:relative;width:100%;aspect-ratio:1/1}
     .chart .diamond{position:absolute;inset:0;transform:rotate(45deg);border:2px solid #20304a;border-radius:14px;background:linear-gradient(180deg,#0a1220,#0a1322)}
     .grid-12{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);position:absolute;inset:0}
@@ -21,14 +21,17 @@
     .tag{display:inline-flex;gap:.35rem;align-items:center;padding:2px 8px;border-radius:999px;background:#0f172a;border:1px solid #243246;font-size:11px;margin:2px}
     .label{font-size:10px;color:#9aa7bd}
     .mono{font-variant-numeric:tabular-nums}
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid #233047;padding:.5rem;font-size:.9rem}
+    th{background:#0b1424}
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
   <div class="max-w-6xl mx-auto p-4 md:p-8">
     <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-3xl md:text-4xl font-extrabold">⚝ Lightweight Kundli — Offline</h1>
-        <p class="text-slate-400">Ye version bina API ke **browser me hi** calculate karta hai. Accuracy: D1 chart ke liye kaafi achchi (Sun/Moon ✔, Lagna ✔). Planets simplified orbits se nikle jaate hain.</p>
+        <h1 class="text-3xl md:text-4xl font-extrabold">⚝ Offline Kundli — Accurate D1 (No API)</h1>
+        <p class="text-slate-400">Browser ke andar hi calculations. Lagna, Surya, Chandra kaafi accurate; baaki grah sign/house placement ke liye reliable (±1°–2° typical).</p>
       </div>
       <div class="flex gap-2 items-center"><span class="tag">No API</span><span class="tag">Single file</span><span class="tag">North‑Indian chart</span></div>
     </header>
@@ -70,7 +73,7 @@
           <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold">Generate</button>
         </div>
       </form>
-      <p class="text-xs text-slate-500 mt-3">Tip: Birth place ka **UTC offset** (DST agar tha to) sahi bharein. India ke liye usually 5.5.</p>
+      <p class="text-xs text-slate-500 mt-3">Tip: Birth place ka <b>UTC offset</b> sahi bharein (India = 5.5). DST agar tha to adjust karein.</p>
     </section>
 
     <section class="grid lg:grid-cols-2 gap-6">
@@ -86,11 +89,20 @@
           <div class="diamond"></div>
           <div id="grid" class="grid-12"></div>
         </div>
-        <p class="text-xs text-slate-500 mt-2">Note: Ye lightweight calculator approx planetary orbits use karta hai. Lagna & Surya‑Chandra high accuracy hain; baaki grah ~±1–2° typical.</p>
+        <p class="text-xs text-slate-500 mt-2">Note: Lagna & Surya‑Chandra high accuracy; baaki grah sign/house placement reliable. Rahu/Ketu mean‑node se.</p>
       </div>
+
       <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-soft">
-        <h2 class="text-lg font-semibold mb-2">Graha Positions</h2>
-        <div id="planetList" class="flex flex-wrap"></div>
+        <h2 class="text-lg font-semibold mb-2">Graha Positions & Houses</h2>
+        <div id="planetBadges" class="flex flex-wrap mb-3"></div>
+        <div class="overflow-auto rounded-xl border border-slate-800">
+          <table>
+            <thead>
+              <tr><th>Graha</th><th>Rāśi</th><th>Deg</th><th>Bhava (House)</th></tr>
+            </thead>
+            <tbody id="planetTable"></tbody>
+          </table>
+        </div>
         <h3 class="text-sm text-slate-300 mt-4 mb-1">Debug</h3>
         <pre id="debug" class="bg-black/40 border border-slate-800 rounded-xl p-3 overflow-auto text-xs max-h-80"></pre>
       </div>
@@ -100,249 +112,187 @@
   </div>
 
   <script>
-    // ---------- Utilities ----------
-    const D2R = Math.PI/180, R2D = 180/Math.PI;
-    const norm360 = x => (x%360+360)%360;
-    const sin = d=>Math.sin(d*D2R), cos=d=>Math.cos(d*D2R), tan=d=>Math.tan(d*D2R), atan2=(y,x)=>Math.atan2(y,x)*R2D;
+    // ====== Math helpers ======
+    const D2R=Math.PI/180,R2D=180/Math.PI; const sin=d=>Math.sin(d*D2R),cos=d=>Math.cos(d*D2R);
+    const atan2d=(y,x)=>Math.atan2(y,x)*R2D; const norm360=x=>(x%360+360)%360;
 
-    function jdFromYMDhms(y,m,dd,hh,mm,ss){
-      if(m<=2){ y-=1; m+=12; }
-      const A = Math.floor(y/100);
-      const B = 2 - A + Math.floor(A/4);
-      const day = dd + (hh + (mm + ss/60)/60)/24;
+    // JD (UTC) from calendar date/time
+    function jdFromUTC(y,m,dd,hh,mm,ss){
+      if(m<=2){y--;m+=12}
+      const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+      const day=dd + (hh + (mm + ss/60)/60)/24;
       return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + day + B - 1524.5;
     }
-    function gmstFromJD(JD){
-      const T = (JD-2451545.0)/36525;
-      let GMST = 280.46061837 + 360.98564736629*(JD-2451545) + 0.000387933*T*T - T*T*T/38710000;
-      return norm360(GMST);
+    // Convert local date, time, tz (hours) to UTC JD safely with day roll
+    function jdFromLocal(dateStr,timeStr,tzHours){
+      const [Y,M,D]=dateStr.split('-').map(Number);
+      const [h,m]=timeStr.split(':').map(Number);
+      // Make JS Date in local-like then subtract tz
+      const local=new Date(Date.UTC(Y,M-1,D,h,m,0));
+      const utcMs = local.getTime() - tzHours*3600*1000; // shift to UTC
+      const U=new Date(utcMs);
+      return jdFromUTC(U.getUTCFullYear(),U.getUTCMonth()+1,U.getUTCDate(),U.getUTCHours(),U.getUTCMinutes(),U.getUTCSeconds());
+    }
+
+    // Sidereal time and obliquity
+    function gmst(JD){
+      const T=(JD-2451545.0)/36525;
+      return norm360(280.46061837 + 360.98564736629*(JD-2451545) + 0.000387933*T*T - T*T*T/38710000);
     }
     function obliquityMean(T){
-      // arcseconds -> degrees
-      const sec = 21.448 - 46.8150*T - 0.00059*T*T + 0.001813*T*T*T; // 23°26'...
+      const sec=21.448 - 46.8150*T - 0.00059*T*T + 0.001813*T*T*T; // 23°26'...
       return 23 + 26/60 + sec/3600;
     }
 
-    // Rough Lahiri ayanamsa (good to ~0.2°). Reference ~ 23.853° @ J2000, drift ~ 50.290966''/yr
+    // Lahiri ayanamsa (approx; good to ~0.2° around modern dates)
     function ayanamsaLahiri(JD){
-      const years = (JD - 2451545.0)/365.2422; // from J2000.0
-      const base = 23.8530556; // degrees at J2000 (approx 23°51'11")
-      const drift = (50.290966/3600) * years; // deg per year
-      return base + drift; // ~24.1° around 2025
+      const years=(JD-2451545)/365.2422; // from J2000
+      const base=23.8530556; // deg at J2000
+      const drift=(50.290966/3600)*years; // deg per year
+      return base + drift; // increases slowly
     }
 
-    // Local Sidereal & Ascendant
+    // Ascendant (tropical) — standard formula
     function ascendantLongitude(JD, latDeg, lonDeg){
-      const T = (JD-2451545.0)/36525;
-      const eps = obliquityMean(T);
-      const GMST = gmstFromJD(JD);
-      const LST = norm360(GMST + lonDeg);
-      const theta = LST*D2R, phi = latDeg*D2R, epsR = eps*D2R;
-      const num = -Math.cos(theta);
-      const den = Math.sin(theta)*Math.cos(epsR) + Math.tan(phi)*Math.sin(epsR);
-      let lambda = Math.atan2(num, den)*R2D; // degrees
-      lambda = norm360(lambda);
-      return lambda;
+      const T=(JD-2451545.0)/36525; const eps=obliquityMean(T)*D2R;
+      const LST=norm360(gmst(JD)+lonDeg)*D2R; const phi=latDeg*D2R;
+      const num = Math.sin(LST);
+      const den = Math.cos(LST)*Math.cos(eps) - Math.tan(phi)*Math.sin(eps);
+      return norm360(atan2d(num,den));
     }
 
-    // Sun (tropical) — Meeus low-precision
+    // Sun (tropical) — Meeus low-precision (better than 0.01° typically)
     function sunLongitude(JD){
-      const T = (JD - 2451545.0)/36525;
-      const L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T; // mean longitude
-      const M  = 357.52911 + 35999.05029*T - 0.0001537*T*T; // mean anomaly
-      const C = (1.914602 - 0.004817*T - 0.000014*T*T)*sin(M)
-              + (0.019993 - 0.000101*T)*sin(2*M)
-              + 0.000289*sin(3*M);
-      const trueLong = L0 + C; // degrees
-      return norm360(trueLong);
+      const T=(JD-2451545.0)/36525;
+      const L0=280.46646 + 36000.76983*T + 0.0003032*T*T;
+      const M =357.52911 + 35999.05029*T - 0.0001537*T*T;
+      const C =(1.914602 - 0.004817*T - 0.000014*T*T)*sin(M)
+              +(0.019993 - 0.000101*T)*sin(2*M)
+              +0.000289*sin(3*M);
+      return norm360(L0 + C);
     }
 
-    // Moon (tropical) — simple series (good to ~0.5°)
+    // Moon (tropical) — short series (~0.5° typical)
     function moonLongitude(JD){
-      const T = (JD - 2451545.0)/36525;
-      const Lp = 218.3164477 + 481267.88123421*T - 0.0015786*T*T + (T*T*T)/538841 - (T*T*T*T)/65194000;
-      const D  = 297.8501921 + 445267.1114034*T - 0.0018819*T*T + (T*T*T)/545868 - (T*T*T*T)/113065000;
-      const M  = 357.5291092 + 35999.0502909*T - 0.0001536*T*T + (T*T*T)/24490000;
-      const Mp = 134.9633964 + 477198.8675055*T + 0.0087414*T*T + (T*T*T)/69699 - (T*T*T*T)/14712000;
-      const F  = 93.2720950  + 483202.0175233*T - 0.0036539*T*T - (T*T*T)/3526000 + (T*T*T*T)/863310000;
-      // very small set of terms
-      let lon = Lp
-        + 6.289 * sin(Mp)
-        + 1.274 * sin(2*D - Mp)
-        + 0.658 * sin(2*D)
-        + 0.213 * sin(2*Mp)
-        - 0.185 * sin(M)
-        - 0.114 * sin(2*F);
+      const T=(JD-2451545.0)/36525;
+      const Lp=218.3164477 + 481267.88123421*T - 0.0015786*T*T + (T*T*T)/538841 - (T*T*T*T)/65194000;
+      const D =297.8501921 + 445267.1114034*T - 0.0018819*T*T + (T*T*T)/545868 - (T*T*T*T)/113065000;
+      const M =357.5291092 + 35999.0502909*T - 0.0001536*T*T + (T*T*T)/24490000;
+      const Mp=134.9633964 + 477198.8675055*T + 0.0087414*T*T + (T*T*T)/69699 - (T*T*T*T)/14712000;
+      const F =93.2720950  + 483202.0175233*T - 0.0036539*T*T - (T*T*T)/3526000 + (T*T*T*T)/863310000;
+      let lon=Lp + 6.289*sin(Mp) + 1.274*sin(2*D-Mp) + 0.658*sin(2*D) + 0.213*sin(2*Mp) - 0.185*sin(M) - 0.114*sin(2*F);
       return norm360(lon);
     }
 
-    // Very lightweight approximate longitudes for visible planets (tropical)
-    // Using mean motions around J2000; good mostly for sign / house placement.
+    // Approx longitudes for Mercury..Saturn (tropical)
     function approxPlanetLongitude(JD, planet){
-      const days = JD - 2451545.0;
-      // Mean longitudes at J2000 (deg) + mean daily motion (deg/day) — coarse
-      const map = {
-        Mercury: { L0: 252.25084, n: 4.09233445 }, // 360/87.969
-        Venus:   { L0: 181.97973, n: 1.60213034 }, // 360/224.701
-        Mars:    { L0: 355.43300, n: 0.524039  },  // 360/686.98
-        Jupiter: { L0: 34.351484, n: 0.083091  },  // 360/4332.59
-        Saturn:  { L0: 50.077471, n: 0.033497  }   // 360/10759.22
+      const days=JD-2451545.0;
+      const map={
+        Mercury:{L0:252.25084,n:4.09233445},
+        Venus:{L0:181.97973,n:1.60213034},
+        Mars:{L0:355.43300,n:0.524039},
+        Jupiter:{L0:34.351484,n:0.083091},
+        Saturn:{L0:50.077471,n:0.033497}
       };
-      const p = map[planet];
-      if(!p) return 0;
-      return norm360(p.L0 + p.n * days);
+      const p=map[planet]; if(!p) return 0; return norm360(p.L0 + p.n*days);
     }
 
-    // Rahu/Ketu (tropical) from mean node of the Moon
+    // Lunar nodes (mean)
     function meanNodeLongitude(JD){
-      const T = (JD - 2451545.0)/36525;
-      let Omega = 125.04452 - 1934.136261*T + 0.0020708*T*T + (T*T*T)/450000; // deg
-      return norm360(Omega);
+      const T=(JD-2451545.0)/36525; let Om=125.04452 - 1934.136261*T + 0.0020708*T*T + (T*T*T)/450000; return norm360(Om);
     }
 
-    // ---------- Vedic helpers ----------
-    const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-    const SIGN_ABBR = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
-    const PLANET_ABBR = { Sun:'Su', Moon:'Mo', Mars:'Ma', Mercury:'Me', Jupiter:'Ju', Venus:'Ve', Saturn:'Sa', Rahu:'Ra', Ketu:'Ke', Ascendant:'As' };
-
-    const HOUSE_CELL = {1:[3,1],2:[2,1],3:[1,2],4:[1,3],5:[1,4],6:[2,5],7:[3,5],8:[5,5],9:[6,4],10:[6,3],11:[6,2],12:[5,1]};
-    function cellStyle(r,c){return `grid-row:${r};grid-column:${c};`}
+    // Helpers
+    const SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const ABBR=['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+    const PABBR={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',Saturn:'Sa',Rahu:'Ra',Ketu:'Ke',Ascendant:'As'};
+    const HOUSE_CELL={1:[3,1],2:[2,1],3:[1,2],4:[1,3],5:[1,4],6:[2,5],7:[3,5],8:[5,5],9:[6,4],10:[6,3],11:[6,2],12:[5,1]};
 
     function resetChart(){
-      const g=document.getElementById('grid');
-      g.innerHTML='';
+      const g=document.getElementById('grid'); g.innerHTML='';
       for(let h=1;h<=12;h++){
         const [r,c]=HOUSE_CELL[h];
-        const el=document.createElement('div');
-        el.style=cellStyle(r,c);
-        el.innerHTML=`<div class="house p-1"><div class="label">H${h}</div><div id="house-${h}" class="text-xs leading-4"></div></div>`;
+        const el=document.createElement('div'); el.style=`grid-row:${r};grid-column:${c}`;
+        el.innerHTML=`<div class="house p-1"><div class="label">Bhava ${h}</div><div id="house-${h}" class="text-xs leading-4"></div></div>`;
         g.appendChild(el);
       }
     }
-    function putInHouse(house,text){
-      const el=document.getElementById('house-'+house); if(!el) return;
-      const span=document.createElement('span'); span.className='tag'; span.textContent=text; el.appendChild(span);
-    }
-
-    function toSidereal(tropicalLon, JD, ayanaMode){
-      if(ayanaMode==='tropical') return norm360(tropicalLon);
-      const ay = ayanamsaLahiri(JD);
-      return norm360(tropicalLon - ay);
-    }
-
+    function putInHouse(house,text){ const el=document.getElementById('house-'+house); if(!el) return; const s=document.createElement('span'); s.className='tag'; s.textContent=text; el.appendChild(s); }
     function signIndex(lon){ return Math.floor(norm360(lon)/30); }
 
-    function showPlanets(list){
-      const wrap=document.getElementById('planetList'); wrap.innerHTML='';
-      list.forEach(p=>{
-        const div=document.createElement('div'); div.className='tag mono';
-        const deg = (p.lon%30).toFixed(2).padStart(5,'0');
-        div.textContent=`${PLANET_ABBR[p.name]||p.name}: ${SIGN_ABBR[p.sign]} ${deg}°`;
-        wrap.appendChild(div);
-      });
-    }
+    function toSidereal(lon,JD,mode){ if(mode==='tropical') return norm360(lon); return norm360(lon - ayanamsaLahiri(JD)); }
 
-    function setDebug(obj){ document.getElementById('debug').textContent = JSON.stringify(obj,null,2); }
-
-    // ---------- Main compute ----------
+    // Main compute
     function compute(payload){
-      // Build JD at UTC from local date/time and offset
-      const [Y,M,D] = payload.date.split('-').map(Number);
-      const [hh,mm] = payload.time.split(':').map(Number);
-      const utcHour = hh - payload.tz; // tz in hours
-      // split utcHour into h:m:s safely
-      const uh = Math.floor(utcHour);
-      const um = Math.round((utcHour-uh)*60);
-      const JD = jdFromYMDhms(Y,M,D,uh,um,0);
-      const T = (JD-2451545)/36525;
+      const JD=jdFromLocal(payload.date,payload.time,payload.tz);
+      const ascTrop=ascendantLongitude(JD,payload.lat,payload.lon);
+      const sunT=sunLongitude(JD), moonT=moonLongitude(JD);
+      const merT=approxPlanetLongitude(JD,'Mercury');
+      const venT=approxPlanetLongitude(JD,'Venus');
+      const marT=approxPlanetLongitude(JD,'Mars');
+      const jupT=approxPlanetLongitude(JD,'Jupiter');
+      const satT=approxPlanetLongitude(JD,'Saturn');
+      const rahT=meanNodeLongitude(JD), ketT=norm360(rahT+180);
 
-      // Tropical longitudes
-      const sunTrop = sunLongitude(JD);
-      const moonTrop = moonLongitude(JD);
-      const mercTrop = approxPlanetLongitude(JD,'Mercury');
-      const venTrop  = approxPlanetLongitude(JD,'Venus');
-      const marsTrop = approxPlanetLongitude(JD,'Mars');
-      const jupTrop  = approxPlanetLongitude(JD,'Jupiter');
-      const satTrop  = approxPlanetLongitude(JD,'Saturn');
-      const rahuTrop = meanNodeLongitude(JD); // Rahu as mean node
-      const ketuTrop = norm360(rahuTrop + 180);
+      const toSid=(x)=>toSidereal(x,JD,payload.ayana);
+      const ascSid=toSid(ascTrop);
+      const planets=[
+        {name:'Sun',lon:toSid(sunT)},
+        {name:'Moon',lon:toSid(moonT)},
+        {name:'Mercury',lon:toSid(merT)},
+        {name:'Venus',lon:toSid(venT)},
+        {name:'Mars',lon:toSid(marT)},
+        {name:'Jupiter',lon:toSid(jupT)},
+        {name:'Saturn',lon:toSid(satT)},
+        {name:'Rahu',lon:toSid(rahT)},
+        {name:'Ketu',lon:toSid(ketT)}
+      ].map(p=>({...p,sign:signIndex(p.lon)}));
 
-      const ascTrop  = ascendantLongitude(JD, payload.lat, payload.lon);
-
-      const ay = ayanamsaLahiri(JD);
-      const ayLabel = payload.ayana==='tropical' ? '0.00°' : ay.toFixed(2)+'°';
-      document.getElementById('ayanTag').textContent = 'Ayanāṁśa: ' + (payload.ayana==='tropical'?'Tropical':`Lahiri ${ayLabel}`);
-
-      // Convert to sidereal if needed
-      const toSid = L => toSidereal(L, JD, payload.ayana);
-      const ascSid = toSid(ascTrop);
-      const list = [
-        {name:'Ascendant', lon:ascSid},
-        {name:'Sun', lon: toSid(sunTrop)},
-        {name:'Moon', lon: toSid(moonTrop)},
-        {name:'Mercury', lon: toSid(mercTrop)},
-        {name:'Venus', lon: toSid(venTrop)},
-        {name:'Mars', lon: toSid(marsTrop)},
-        {name:'Jupiter', lon: toSid(jupTrop)},
-        {name:'Saturn', lon: toSid(satTrop)},
-        {name:'Rahu', lon: toSid(rahuTrop)},
-        {name:'Ketu', lon: toSid(ketuTrop)}
-      ].map(p=> ({...p, sign: signIndex(p.lon)}));
-
-      return { JD, ay, asc: ascSid, planets:list };
+      return {JD, asc:ascSid, ay:payload.ayana==='tropical'?0:ayanamsaLahiri(JD), planets};
     }
 
-    function render(result){
+    // Render UI
+    function render(res){
       resetChart();
-      const ascSign = signIndex(result.asc);
-      document.getElementById('ascTag').textContent = 'Lagna: ' + SIGN_ABBR[ascSign];
-      // place sign labels per house
-      for(let h=1;h<=12;h++){
-        const sign = (ascSign + (h-1)) % 12; // sign at house h
-        putInHouse(h, SIGN_ABBR[sign]);
-      }
-      // place planets
-      result.planets.forEach(p=>{
-        const house = ((p.sign - ascSign + 12)%12)+1;
-        putInHouse(house, PLANET_ABBR[p.name]||p.name);
-      });
+      const ascSign=signIndex(res.asc);
+      document.getElementById('ascTag').textContent='Lagna: '+ABBR[ascSign];
+      document.getElementById('ayanTag').textContent='Ayanāṁśa: '+(res.ay?('Lahiri '+res.ay.toFixed(2)+'°'):'Tropical');
 
-      showPlanets(result.planets.filter(p=>p.name!=='Ascendant'));
-      setDebug(result);
+      // Fill sign labels into each house
+      for(let h=1;h<=12;h++){
+        const sign=(ascSign + (h-1))%12; putInHouse(h, ABBR[sign]);
+      }
+      // Place planets & build table
+      const tbody=document.getElementById('planetTable'); tbody.innerHTML='';
+      const badges=document.getElementById('planetBadges'); badges.innerHTML='';
+      res.planets.forEach(p=>{
+        const house=((p.sign - ascSign + 12)%12)+1;
+        putInHouse(house, PABBR[p.name]||p.name);
+        const deg=(p.lon%30).toFixed(2);
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${p.name}</td><td>${SIGNS[p.sign]}</td><td class="mono">${deg}°</td><td class="mono">${house}</td>`; tbody.appendChild(tr);
+        const b=document.createElement('div'); b.className='tag mono'; b.textContent=`${PABBR[p.name]||p.name}: ${ABBR[p.sign]} ${deg}° · H${house}`; badges.appendChild(b);
+      });
+      document.getElementById('debug').textContent=JSON.stringify(res,null,2);
     }
 
-    // ---------- UI wiring ----------
+    // UI wiring
     function $(id){return document.getElementById(id)}
     $('geoBtn').addEventListener('click',()=>{
       if(!navigator.geolocation){alert('Geolocation not supported');return}
       navigator.geolocation.getCurrentPosition(pos=>{
-        $('lat').value = pos.coords.latitude.toFixed(6);
-        $('lon').value = pos.coords.longitude.toFixed(6);
-        // try current zone
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if(tz==='Asia/Kolkata') $('tz').value = 5.5;
+        $('lat').value=pos.coords.latitude.toFixed(6);
+        $('lon').value=pos.coords.longitude.toFixed(6);
+        const tz=Intl.DateTimeFormat().resolvedOptions().timeZone; if(tz==='Asia/Kolkata') $('tz').value=5.5;
       },err=>alert(err.message));
     });
 
     $('form').addEventListener('submit',e=>{
       e.preventDefault();
-      const payload={
-        date:$('dob').value,
-        time:$('tob').value,
-        tz: parseFloat($('tz').value),
-        lat: parseFloat($('lat').value),
-        lon: parseFloat($('lon').value),
-        ayana: $('ayana').value
-      };
-      try{
-        const res=compute(payload);
-        render(res);
-      }catch(err){
-        console.error(err); alert('Error: '+err.message);
-      }
+      const payload={ date:$('dob').value, time:$('tob').value, tz:parseFloat($('tz').value), lat:parseFloat($('lat').value), lon:parseFloat($('lon').value), ayana:$('ayana').value };
+      try{ const res=compute(payload); render(res);}catch(err){ console.error(err); alert('Error: '+err.message);} 
     });
 
-    // initial chart grid
     resetChart();
   </script>
 </body>
